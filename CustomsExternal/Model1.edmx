@@ -1,0 +1,893 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="CustomsExternalModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ConsignmentPackagesMeasures">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DeclarationId" Type="int" />
+          <Property Name="PackagesSequenceNumeric" Type="int" Nullable="false" />
+          <Property Name="PackageMeasureQualifier" Type="nvarchar(max)" />
+          <Property Name="TotalPackageQuantity" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="GrossMassMeasure" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="TypeCode" Type="nvarchar(max)" />
+          <Property Name="MarksNumbers" Type="nvarchar(max)" />
+          <Property Name="ConsignmentId" Type="int" />
+        </EntityType>
+        <EntityType Name="ConsignmentRegisteredFacilities">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DeclarationId" Type="int" Nullable="false" />
+          <Property Name="ConsignmentId" Type="int" Nullable="false" />
+          <Property Name="FacilitySequenceNumeric" Type="smallint" Nullable="false" />
+          <Property Name="FacilityID" Type="nvarchar(max)" />
+          <Property Name="FacilityType" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Consignments">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DeclarationId" Type="int" />
+          <Property Name="SequenceNumeric" Type="smallint" Nullable="false" />
+          <Property Name="CargoDescription" Type="nvarchar(max)" />
+          <Property Name="LastReleaseFromWarehousInd" Type="int" />
+          <Property Name="ExportationCountryCode" Type="nvarchar(max)" />
+          <Property Name="LoadingLocation" Type="nvarchar(max)" />
+          <Property Name="TransportContractDocumentID" Type="nvarchar(max)" />
+          <Property Name="TransportContractDocumentTypeCode" Type="nvarchar(max)" />
+          <Property Name="TransportContractDocumentIssueDateTime" Type="datetime2" Precision="7" />
+          <Property Name="SecondCargoID" Type="nvarchar(max)" />
+          <Property Name="ThirdCargoID" Type="nvarchar(max)" />
+          <Property Name="ArrivalDateTime" Type="datetime2" Precision="7" />
+          <Property Name="UnloadingLocationID" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Declarations">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="AgentFileReferenceID" Type="varchar" MaxLength="50" />
+          <Property Name="AcceptanceDateTime" Type="datetime" />
+          <Property Name="DeclarationOfficeID" Type="nvarchar(max)" />
+          <Property Name="DeclarationNumber" Type="nvarchar(max)" />
+          <Property Name="IssueDateTime" Type="datetime" />
+          <Property Name="TypeCode" Type="nvarchar(max)" />
+          <Property Name="TaxationDateTime" Type="datetime" />
+          <Property Name="ExternalDeclarationID" Type="nvarchar(max)" />
+          <Property Name="VersionID" Type="nvarchar(max)" />
+          <Property Name="ExpenseLoadingFactor" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="AutonomyRegionType" Type="nvarchar(max)" />
+          <Property Name="TehilaDeclarationID" Type="nvarchar(max)" />
+          <Property Name="ReleaseDateTime" Type="datetime" />
+          <Property Name="TotalDealValueAmountNIS" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="CifValueNIS" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="TaxAssessedAmount" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="AgentID" Type="nvarchar(max)" />
+          <Property Name="RoleCode" Type="nvarchar(max)" />
+          <Property Name="GovernmentProcedure" Type="nvarchar(max)" />
+          <Property Name="ImporterID" Type="nvarchar(max)" />
+          <Property Name="ImporterRoleCode" Type="nvarchar(max)" />
+          <Property Name="EntitlementTypeCode" Type="nvarchar(max)" />
+          <Property Name="IssueLocation" Type="nvarchar(max)" />
+          <Property Name="ImporterName" Type="nvarchar(max)" />
+          <Property Name="ImporterCountry" Type="nvarchar(max)" />
+          <Property Name="PreviousDocument" Type="nvarchar(max)" />
+          <Property Name="PreviousDocumentType" Type="nvarchar(max)" />
+          <Property Name="CreateDateTime" Type="datetime" />
+          <Property Name="DeclarationStatusCode" Type="nvarchar(max)" />
+          <Property Name="CustomsStatus" Type="int" />
+          <Property Name="TotalMADDealValueAmountNIS" Type="decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="DeclarationTaxes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DeclarationId" Type="int" Nullable="false" />
+          <Property Name="AdValoremTaxBaseAmount" Type="decimal" Precision="18" Scale="2" />
+          <Property Name="TaxTypeCode" Type="nvarchar(max)" />
+          <Property Name="Amount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="DeferedTaxAmount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+        </EntityType>
+        <EntityType Name="DocumentAttribute">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PointerID" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="DocID" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="Attribute" Type="nvarchar" MaxLength="50" />
+          <Property Name="Attribute_Vlaue" Type="varchar" MaxLength="50" />
+        </EntityType>
+        <EntityType Name="Documents">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Code" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="URL" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="FileName" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="DocumentType" Type="nvarchar(max)" />
+          <Property Name="CustomsId" Type="int" />
+          <Property Name="InternalID" Type="varchar" MaxLength="100" />
+          <Property Name="CustomsStatus" Type="int" />
+          <Property Name="ErrorDesc" Type="nvarchar(max)" />
+          <Property Name="RelatedEntity" Type="numeric" Precision="18" Scale="0" />
+          <Property Name="RelatedID" Type="numeric" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="Registration">
+          <Key>
+            <PropertyRef Name="RowId" />
+          </Key>
+          <Property Name="RowId" Type="numeric" Precision="18" Scale="0" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="FirstName" Type="nvarchar" MaxLength="35" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="35" />
+          <Property Name="CustomerType" Type="varchar" MaxLength="5" />
+          <Property Name="Mobile" Type="varchar" MaxLength="15" />
+          <Property Name="Email" Type="varchar" MaxLength="100" />
+          <Property Name="AllowPromotion" Type="bit" />
+          <Property Name="Password" Type="varchar" MaxLength="30" />
+          <Property Name="Id" Type="int" />
+        </EntityType>
+        <EntityType Name="SupplierInvoiceItems">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DeclarationId" Type="int" Nullable="false" />
+          <Property Name="SupplierInvoiceId" Type="int" />
+          <Property Name="LineNumber" Type="int" Nullable="false" />
+          <Property Name="CustomsBookType" Type="nvarchar(max)" />
+          <Property Name="TaxExemptCode" Type="nvarchar(max)" />
+          <Property Name="OptionalTama" Type="nvarchar(max)" />
+          <Property Name="SalesTaxExemptionType" Type="nvarchar(max)" />
+          <Property Name="IsUsed" Type="bit" Nullable="false" />
+          <Property Name="CustomsValueAmount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="AmountType" Type="nvarchar(max)" />
+          <Property Name="ClassificationID" Type="nvarchar(max)" />
+          <Property Name="ClassificationIdentificationTypeCode" Type="nvarchar(max)" />
+          <Property Name="TariffQuantity" Type="nvarchar(max)" />
+          <Property Name="OriginCountryCode" Type="nvarchar(max)" />
+          <Property Name="DutyRegimeCode" Type="nvarchar(max)" />
+          <Property Name="MeasureQualifier" Type="varchar" MaxLength="4" />
+        </EntityType>
+        <EntityType Name="SupplierInvoices">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DeclarationId" Type="int" />
+          <Property Name="SequenceNumeric" Type="int" Nullable="false" />
+          <Property Name="InvoiceNumber" Type="nvarchar(max)" />
+          <Property Name="IssueDateTime" Type="datetime2" Precision="7" Nullable="false" />
+          <Property Name="InvoiceTypeCode" Type="nvarchar(max)" />
+          <Property Name="IsPrefarenceDocumentInd" Type="bit" Nullable="false" />
+          <Property Name="PrefarenceDocumentType" Type="nvarchar(max)" />
+          <Property Name="PaymentType" Type="nvarchar(max)" />
+          <Property Name="InvoiceAmount" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="RateNumeric" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="SupplierID" Type="nvarchar(max)" />
+          <Property Name="TradeTermsConditionCode" Type="nvarchar(max)" />
+          <Property Name="LocationID" Type="nvarchar(max)" />
+          <Property Name="CurrencyCode" Type="nvarchar(max)" />
+        </EntityType>
+        <Association Name="FK_ConsignmentPackagesMeasures_Consignments_ConsignmentId">
+          <End Role="Consignments" Type="Self.Consignments" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ConsignmentPackagesMeasures" Type="Self.ConsignmentPackagesMeasures" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Consignments">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ConsignmentPackagesMeasures">
+              <PropertyRef Name="ConsignmentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ConsignmentPackagesMeasures_Declarations_DeclarationId">
+          <End Role="Declarations" Type="Self.Declarations" Multiplicity="0..1" />
+          <End Role="ConsignmentPackagesMeasures" Type="Self.ConsignmentPackagesMeasures" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Declarations">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ConsignmentPackagesMeasures">
+              <PropertyRef Name="DeclarationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ConsignmentRegisteredFacilities_Consignments_ConsignmentId">
+          <End Role="Consignments" Type="Self.Consignments" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ConsignmentRegisteredFacilities" Type="Self.ConsignmentRegisteredFacilities" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Consignments">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ConsignmentRegisteredFacilities">
+              <PropertyRef Name="ConsignmentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ConsignmentRegisteredFacilities_Declarations_DeclarationId">
+          <End Role="Declarations" Type="Self.Declarations" Multiplicity="1" />
+          <End Role="ConsignmentRegisteredFacilities" Type="Self.ConsignmentRegisteredFacilities" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Declarations">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ConsignmentRegisteredFacilities">
+              <PropertyRef Name="DeclarationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Consignments_Declarations_DeclarationId">
+          <End Role="Declarations" Type="Self.Declarations" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Consignments" Type="Self.Consignments" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Declarations">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Consignments">
+              <PropertyRef Name="DeclarationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DeclarationTaxes_Declarations_DeclarationId">
+          <End Role="Declarations" Type="Self.Declarations" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="DeclarationTaxes" Type="Self.DeclarationTaxes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Declarations">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DeclarationTaxes">
+              <PropertyRef Name="DeclarationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SupplierInvoiceItems_SupplierInvoices_SupplierInvoiceId">
+          <End Role="SupplierInvoices" Type="Self.SupplierInvoices" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="SupplierInvoiceItems" Type="Self.SupplierInvoiceItems" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SupplierInvoices">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SupplierInvoiceItems">
+              <PropertyRef Name="SupplierInvoiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SupplierInvoices_Declarations_DeclarationId">
+          <End Role="Declarations" Type="Self.Declarations" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="SupplierInvoices" Type="Self.SupplierInvoices" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Declarations">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SupplierInvoices">
+              <PropertyRef Name="DeclarationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="CustomsExternalModelStoreContainer">
+          <EntitySet Name="ConsignmentPackagesMeasures" EntityType="Self.ConsignmentPackagesMeasures" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ConsignmentRegisteredFacilities" EntityType="Self.ConsignmentRegisteredFacilities" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Consignments" EntityType="Self.Consignments" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Declarations" EntityType="Self.Declarations" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DeclarationTaxes" EntityType="Self.DeclarationTaxes" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DocumentAttribute" EntityType="Self.DocumentAttribute" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Documents" EntityType="Self.Documents" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Registration" EntityType="Self.Registration" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SupplierInvoiceItems" EntityType="Self.SupplierInvoiceItems" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="SupplierInvoices" EntityType="Self.SupplierInvoices" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_ConsignmentPackagesMeasures_Consignments_ConsignmentId" Association="Self.FK_ConsignmentPackagesMeasures_Consignments_ConsignmentId">
+            <End Role="Consignments" EntitySet="Consignments" />
+            <End Role="ConsignmentPackagesMeasures" EntitySet="ConsignmentPackagesMeasures" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ConsignmentPackagesMeasures_Declarations_DeclarationId" Association="Self.FK_ConsignmentPackagesMeasures_Declarations_DeclarationId">
+            <End Role="Declarations" EntitySet="Declarations" />
+            <End Role="ConsignmentPackagesMeasures" EntitySet="ConsignmentPackagesMeasures" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ConsignmentRegisteredFacilities_Consignments_ConsignmentId" Association="Self.FK_ConsignmentRegisteredFacilities_Consignments_ConsignmentId">
+            <End Role="Consignments" EntitySet="Consignments" />
+            <End Role="ConsignmentRegisteredFacilities" EntitySet="ConsignmentRegisteredFacilities" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ConsignmentRegisteredFacilities_Declarations_DeclarationId" Association="Self.FK_ConsignmentRegisteredFacilities_Declarations_DeclarationId">
+            <End Role="Declarations" EntitySet="Declarations" />
+            <End Role="ConsignmentRegisteredFacilities" EntitySet="ConsignmentRegisteredFacilities" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Consignments_Declarations_DeclarationId" Association="Self.FK_Consignments_Declarations_DeclarationId">
+            <End Role="Declarations" EntitySet="Declarations" />
+            <End Role="Consignments" EntitySet="Consignments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DeclarationTaxes_Declarations_DeclarationId" Association="Self.FK_DeclarationTaxes_Declarations_DeclarationId">
+            <End Role="Declarations" EntitySet="Declarations" />
+            <End Role="DeclarationTaxes" EntitySet="DeclarationTaxes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SupplierInvoiceItems_SupplierInvoices_SupplierInvoiceId" Association="Self.FK_SupplierInvoiceItems_SupplierInvoices_SupplierInvoiceId">
+            <End Role="SupplierInvoices" EntitySet="SupplierInvoices" />
+            <End Role="SupplierInvoiceItems" EntitySet="SupplierInvoiceItems" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SupplierInvoices_Declarations_DeclarationId" Association="Self.FK_SupplierInvoices_Declarations_DeclarationId">
+            <End Role="Declarations" EntitySet="Declarations" />
+            <End Role="SupplierInvoices" EntitySet="SupplierInvoices" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="CustomsExternalModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="ConsignmentPackagesMeasures">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DeclarationId" Type="Int32" />
+          <Property Name="PackagesSequenceNumeric" Type="Int32" Nullable="false" />
+          <Property Name="PackageMeasureQualifier" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TotalPackageQuantity" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="GrossMassMeasure" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="TypeCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MarksNumbers" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ConsignmentId" Type="Int32" />
+          <NavigationProperty Name="Consignments" Relationship="Self.FK_ConsignmentPackagesMeasures_Consignments_ConsignmentId" FromRole="ConsignmentPackagesMeasures" ToRole="Consignments" />
+          <NavigationProperty Name="Declarations" Relationship="Self.FK_ConsignmentPackagesMeasures_Declarations_DeclarationId" FromRole="ConsignmentPackagesMeasures" ToRole="Declarations" />
+        </EntityType>
+        <EntityType Name="ConsignmentRegisteredFacilities">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DeclarationId" Type="Int32" Nullable="false" />
+          <Property Name="ConsignmentId" Type="Int32" Nullable="false" />
+          <Property Name="FacilitySequenceNumeric" Type="Int16" Nullable="false" />
+          <Property Name="FacilityID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="FacilityType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Consignments" Relationship="Self.FK_ConsignmentRegisteredFacilities_Consignments_ConsignmentId" FromRole="ConsignmentRegisteredFacilities" ToRole="Consignments" />
+          <NavigationProperty Name="Declarations" Relationship="Self.FK_ConsignmentRegisteredFacilities_Declarations_DeclarationId" FromRole="ConsignmentRegisteredFacilities" ToRole="Declarations" />
+        </EntityType>
+        <EntityType Name="Consignments">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DeclarationId" Type="Int32" />
+          <Property Name="SequenceNumeric" Type="Int16" Nullable="false" />
+          <Property Name="CargoDescription" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LastReleaseFromWarehousInd" Type="Int32" />
+          <Property Name="ExportationCountryCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LoadingLocation" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TransportContractDocumentID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TransportContractDocumentTypeCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TransportContractDocumentIssueDateTime" Type="DateTime" Precision="7" />
+          <Property Name="SecondCargoID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ThirdCargoID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ArrivalDateTime" Type="DateTime" Precision="7" />
+          <Property Name="UnloadingLocationID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="ConsignmentPackagesMeasures" Relationship="Self.FK_ConsignmentPackagesMeasures_Consignments_ConsignmentId" FromRole="Consignments" ToRole="ConsignmentPackagesMeasures" />
+          <NavigationProperty Name="ConsignmentRegisteredFacilities" Relationship="Self.FK_ConsignmentRegisteredFacilities_Consignments_ConsignmentId" FromRole="Consignments" ToRole="ConsignmentRegisteredFacilities" />
+          <NavigationProperty Name="Declarations" Relationship="Self.FK_Consignments_Declarations_DeclarationId" FromRole="Consignments" ToRole="Declarations" />
+        </EntityType>
+        <EntityType Name="Declarations">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="AgentFileReferenceID" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="AcceptanceDateTime" Type="DateTime" Precision="3" />
+          <Property Name="DeclarationOfficeID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DeclarationNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IssueDateTime" Type="DateTime" Precision="3" />
+          <Property Name="TypeCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TaxationDateTime" Type="DateTime" Precision="3" />
+          <Property Name="ExternalDeclarationID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="VersionID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ExpenseLoadingFactor" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="AutonomyRegionType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TehilaDeclarationID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ReleaseDateTime" Type="DateTime" Precision="3" />
+          <Property Name="TotalDealValueAmountNIS" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="CifValueNIS" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="TaxAssessedAmount" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="AgentID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RoleCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="GovernmentProcedure" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ImporterID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ImporterRoleCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="EntitlementTypeCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IssueLocation" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ImporterName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ImporterCountry" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PreviousDocument" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PreviousDocumentType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreateDateTime" Type="DateTime" Precision="3" />
+          <Property Name="DeclarationStatusCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CustomsStatus" Type="Int32" />
+          <Property Name="TotalMADDealValueAmountNIS" Type="Decimal" Precision="18" Scale="0" />
+          <NavigationProperty Name="ConsignmentPackagesMeasures" Relationship="Self.FK_ConsignmentPackagesMeasures_Declarations_DeclarationId" FromRole="Declarations" ToRole="ConsignmentPackagesMeasures" />
+          <NavigationProperty Name="ConsignmentRegisteredFacilities" Relationship="Self.FK_ConsignmentRegisteredFacilities_Declarations_DeclarationId" FromRole="Declarations" ToRole="ConsignmentRegisteredFacilities" />
+          <NavigationProperty Name="Consignments" Relationship="Self.FK_Consignments_Declarations_DeclarationId" FromRole="Declarations" ToRole="Consignments" />
+          <NavigationProperty Name="DeclarationTaxes" Relationship="Self.FK_DeclarationTaxes_Declarations_DeclarationId" FromRole="Declarations" ToRole="DeclarationTaxes" />
+          <NavigationProperty Name="SupplierInvoices" Relationship="Self.FK_SupplierInvoices_Declarations_DeclarationId" FromRole="Declarations" ToRole="SupplierInvoices" />
+        </EntityType>
+        <EntityType Name="DeclarationTaxes">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DeclarationId" Type="Int32" Nullable="false" />
+          <Property Name="AdValoremTaxBaseAmount" Type="Decimal" Precision="18" Scale="2" />
+          <Property Name="TaxTypeCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Amount" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="DeferedTaxAmount" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <NavigationProperty Name="Declarations" Relationship="Self.FK_DeclarationTaxes_Declarations_DeclarationId" FromRole="DeclarationTaxes" ToRole="Declarations" />
+        </EntityType>
+        <EntityType Name="DocumentAttribute">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Decimal" Precision="18" Scale="0" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PointerID" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="DocID" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="Attribute" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="Attribute_Vlaue" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Documents">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Code" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="URL" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="FileName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="DocumentType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CustomsId" Type="Int32" />
+          <Property Name="InternalID" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="CustomsStatus" Type="Int32" />
+          <Property Name="ErrorDesc" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="RelatedEntity" Type="Decimal" Precision="18" Scale="0" />
+          <Property Name="RelatedID" Type="Decimal" Precision="18" Scale="0" />
+        </EntityType>
+        <EntityType Name="Registration">
+          <Key>
+            <PropertyRef Name="RowId" />
+          </Key>
+          <Property Name="RowId" Type="Decimal" Precision="18" Scale="0" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="FirstName" Type="String" MaxLength="35" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" MaxLength="35" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerType" Type="String" MaxLength="5" FixedLength="false" Unicode="false" />
+          <Property Name="Mobile" Type="String" MaxLength="15" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="AllowPromotion" Type="Boolean" />
+          <Property Name="Password" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
+          <Property Name="Id" Type="Int32" />
+        </EntityType>
+        <EntityType Name="SupplierInvoiceItems">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DeclarationId" Type="Int32" Nullable="false" />
+          <Property Name="SupplierInvoiceId" Type="Int32" />
+          <Property Name="LineNumber" Type="Int32" Nullable="false" />
+          <Property Name="CustomsBookType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TaxExemptCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="OptionalTama" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SalesTaxExemptionType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsUsed" Type="Boolean" Nullable="false" />
+          <Property Name="CustomsValueAmount" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="AmountType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ClassificationID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ClassificationIdentificationTypeCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TariffQuantity" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="OriginCountryCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DutyRegimeCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="MeasureQualifier" Type="String" MaxLength="4" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="SupplierInvoices" Relationship="Self.FK_SupplierInvoiceItems_SupplierInvoices_SupplierInvoiceId" FromRole="SupplierInvoiceItems" ToRole="SupplierInvoices" />
+        </EntityType>
+        <EntityType Name="SupplierInvoices">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DeclarationId" Type="Int32" />
+          <Property Name="SequenceNumeric" Type="Int32" Nullable="false" />
+          <Property Name="InvoiceNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IssueDateTime" Type="DateTime" Nullable="false" Precision="7" />
+          <Property Name="InvoiceTypeCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsPrefarenceDocumentInd" Type="Boolean" Nullable="false" />
+          <Property Name="PrefarenceDocumentType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PaymentType" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="InvoiceAmount" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="RateNumeric" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="SupplierID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TradeTermsConditionCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="LocationID" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CurrencyCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Declarations" Relationship="Self.FK_SupplierInvoices_Declarations_DeclarationId" FromRole="SupplierInvoices" ToRole="Declarations" />
+          <NavigationProperty Name="SupplierInvoiceItems" Relationship="Self.FK_SupplierInvoiceItems_SupplierInvoices_SupplierInvoiceId" FromRole="SupplierInvoices" ToRole="SupplierInvoiceItems" />
+        </EntityType>
+        <Association Name="FK_ConsignmentPackagesMeasures_Consignments_ConsignmentId">
+          <End Role="Consignments" Type="Self.Consignments" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ConsignmentPackagesMeasures" Type="Self.ConsignmentPackagesMeasures" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Consignments">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ConsignmentPackagesMeasures">
+              <PropertyRef Name="ConsignmentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ConsignmentPackagesMeasures_Declarations_DeclarationId">
+          <End Role="Declarations" Type="Self.Declarations" Multiplicity="0..1" />
+          <End Role="ConsignmentPackagesMeasures" Type="Self.ConsignmentPackagesMeasures" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Declarations">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ConsignmentPackagesMeasures">
+              <PropertyRef Name="DeclarationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ConsignmentRegisteredFacilities_Consignments_ConsignmentId">
+          <End Role="Consignments" Type="Self.Consignments" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="ConsignmentRegisteredFacilities" Type="Self.ConsignmentRegisteredFacilities" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Consignments">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ConsignmentRegisteredFacilities">
+              <PropertyRef Name="ConsignmentId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_ConsignmentRegisteredFacilities_Declarations_DeclarationId">
+          <End Role="Declarations" Type="Self.Declarations" Multiplicity="1" />
+          <End Role="ConsignmentRegisteredFacilities" Type="Self.ConsignmentRegisteredFacilities" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Declarations">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="ConsignmentRegisteredFacilities">
+              <PropertyRef Name="DeclarationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Consignments_Declarations_DeclarationId">
+          <End Role="Declarations" Type="Self.Declarations" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="Consignments" Type="Self.Consignments" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Declarations">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Consignments">
+              <PropertyRef Name="DeclarationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DeclarationTaxes_Declarations_DeclarationId">
+          <End Role="Declarations" Type="Self.Declarations" Multiplicity="1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="DeclarationTaxes" Type="Self.DeclarationTaxes" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Declarations">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="DeclarationTaxes">
+              <PropertyRef Name="DeclarationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SupplierInvoices_Declarations_DeclarationId">
+          <End Role="Declarations" Type="Self.Declarations" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="SupplierInvoices" Type="Self.SupplierInvoices" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Declarations">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SupplierInvoices">
+              <PropertyRef Name="DeclarationId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_SupplierInvoiceItems_SupplierInvoices_SupplierInvoiceId">
+          <End Role="SupplierInvoices" Type="Self.SupplierInvoices" Multiplicity="0..1">
+            <OnDelete Action="Cascade" />
+          </End>
+          <End Role="SupplierInvoiceItems" Type="Self.SupplierInvoiceItems" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="SupplierInvoices">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="SupplierInvoiceItems">
+              <PropertyRef Name="SupplierInvoiceId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="CustomsExternalEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="ConsignmentPackagesMeasures" EntityType="Self.ConsignmentPackagesMeasures" />
+          <EntitySet Name="ConsignmentRegisteredFacilities" EntityType="Self.ConsignmentRegisteredFacilities" />
+          <EntitySet Name="Consignments" EntityType="Self.Consignments" />
+          <EntitySet Name="Declarations" EntityType="Self.Declarations" />
+          <EntitySet Name="DeclarationTaxes" EntityType="Self.DeclarationTaxes" />
+          <EntitySet Name="DocumentAttribute" EntityType="Self.DocumentAttribute" />
+          <EntitySet Name="Documents" EntityType="Self.Documents" />
+          <EntitySet Name="Registration" EntityType="Self.Registration" />
+          <EntitySet Name="SupplierInvoiceItems" EntityType="Self.SupplierInvoiceItems" />
+          <EntitySet Name="SupplierInvoices" EntityType="Self.SupplierInvoices" />
+          <AssociationSet Name="FK_ConsignmentPackagesMeasures_Consignments_ConsignmentId" Association="Self.FK_ConsignmentPackagesMeasures_Consignments_ConsignmentId">
+            <End Role="Consignments" EntitySet="Consignments" />
+            <End Role="ConsignmentPackagesMeasures" EntitySet="ConsignmentPackagesMeasures" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ConsignmentPackagesMeasures_Declarations_DeclarationId" Association="Self.FK_ConsignmentPackagesMeasures_Declarations_DeclarationId">
+            <End Role="Declarations" EntitySet="Declarations" />
+            <End Role="ConsignmentPackagesMeasures" EntitySet="ConsignmentPackagesMeasures" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ConsignmentRegisteredFacilities_Consignments_ConsignmentId" Association="Self.FK_ConsignmentRegisteredFacilities_Consignments_ConsignmentId">
+            <End Role="Consignments" EntitySet="Consignments" />
+            <End Role="ConsignmentRegisteredFacilities" EntitySet="ConsignmentRegisteredFacilities" />
+          </AssociationSet>
+          <AssociationSet Name="FK_ConsignmentRegisteredFacilities_Declarations_DeclarationId" Association="Self.FK_ConsignmentRegisteredFacilities_Declarations_DeclarationId">
+            <End Role="Declarations" EntitySet="Declarations" />
+            <End Role="ConsignmentRegisteredFacilities" EntitySet="ConsignmentRegisteredFacilities" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Consignments_Declarations_DeclarationId" Association="Self.FK_Consignments_Declarations_DeclarationId">
+            <End Role="Declarations" EntitySet="Declarations" />
+            <End Role="Consignments" EntitySet="Consignments" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DeclarationTaxes_Declarations_DeclarationId" Association="Self.FK_DeclarationTaxes_Declarations_DeclarationId">
+            <End Role="Declarations" EntitySet="Declarations" />
+            <End Role="DeclarationTaxes" EntitySet="DeclarationTaxes" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SupplierInvoices_Declarations_DeclarationId" Association="Self.FK_SupplierInvoices_Declarations_DeclarationId">
+            <End Role="Declarations" EntitySet="Declarations" />
+            <End Role="SupplierInvoices" EntitySet="SupplierInvoices" />
+          </AssociationSet>
+          <AssociationSet Name="FK_SupplierInvoiceItems_SupplierInvoices_SupplierInvoiceId" Association="Self.FK_SupplierInvoiceItems_SupplierInvoices_SupplierInvoiceId">
+            <End Role="SupplierInvoices" EntitySet="SupplierInvoices" />
+            <End Role="SupplierInvoiceItems" EntitySet="SupplierInvoiceItems" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="CustomsExternalModelStoreContainer" CdmEntityContainer="CustomsExternalEntities">
+          <EntitySetMapping Name="ConsignmentPackagesMeasures">
+            <EntityTypeMapping TypeName="CustomsExternalModel.ConsignmentPackagesMeasures">
+              <MappingFragment StoreEntitySet="ConsignmentPackagesMeasures">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DeclarationId" ColumnName="DeclarationId" />
+                <ScalarProperty Name="PackagesSequenceNumeric" ColumnName="PackagesSequenceNumeric" />
+                <ScalarProperty Name="PackageMeasureQualifier" ColumnName="PackageMeasureQualifier" />
+                <ScalarProperty Name="TotalPackageQuantity" ColumnName="TotalPackageQuantity" />
+                <ScalarProperty Name="GrossMassMeasure" ColumnName="GrossMassMeasure" />
+                <ScalarProperty Name="TypeCode" ColumnName="TypeCode" />
+                <ScalarProperty Name="MarksNumbers" ColumnName="MarksNumbers" />
+                <ScalarProperty Name="ConsignmentId" ColumnName="ConsignmentId" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ConsignmentRegisteredFacilities">
+            <EntityTypeMapping TypeName="CustomsExternalModel.ConsignmentRegisteredFacilities">
+              <MappingFragment StoreEntitySet="ConsignmentRegisteredFacilities">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DeclarationId" ColumnName="DeclarationId" />
+                <ScalarProperty Name="ConsignmentId" ColumnName="ConsignmentId" />
+                <ScalarProperty Name="FacilitySequenceNumeric" ColumnName="FacilitySequenceNumeric" />
+                <ScalarProperty Name="FacilityID" ColumnName="FacilityID" />
+                <ScalarProperty Name="FacilityType" ColumnName="FacilityType" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Consignments">
+            <EntityTypeMapping TypeName="CustomsExternalModel.Consignments">
+              <MappingFragment StoreEntitySet="Consignments">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DeclarationId" ColumnName="DeclarationId" />
+                <ScalarProperty Name="SequenceNumeric" ColumnName="SequenceNumeric" />
+                <ScalarProperty Name="CargoDescription" ColumnName="CargoDescription" />
+                <ScalarProperty Name="LastReleaseFromWarehousInd" ColumnName="LastReleaseFromWarehousInd" />
+                <ScalarProperty Name="ExportationCountryCode" ColumnName="ExportationCountryCode" />
+                <ScalarProperty Name="LoadingLocation" ColumnName="LoadingLocation" />
+                <ScalarProperty Name="TransportContractDocumentID" ColumnName="TransportContractDocumentID" />
+                <ScalarProperty Name="TransportContractDocumentTypeCode" ColumnName="TransportContractDocumentTypeCode" />
+                <ScalarProperty Name="TransportContractDocumentIssueDateTime" ColumnName="TransportContractDocumentIssueDateTime" />
+                <ScalarProperty Name="SecondCargoID" ColumnName="SecondCargoID" />
+                <ScalarProperty Name="ThirdCargoID" ColumnName="ThirdCargoID" />
+                <ScalarProperty Name="ArrivalDateTime" ColumnName="ArrivalDateTime" />
+                <ScalarProperty Name="UnloadingLocationID" ColumnName="UnloadingLocationID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Declarations">
+            <EntityTypeMapping TypeName="CustomsExternalModel.Declarations">
+              <MappingFragment StoreEntitySet="Declarations">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="AgentFileReferenceID" ColumnName="AgentFileReferenceID" />
+                <ScalarProperty Name="AcceptanceDateTime" ColumnName="AcceptanceDateTime" />
+                <ScalarProperty Name="DeclarationOfficeID" ColumnName="DeclarationOfficeID" />
+                <ScalarProperty Name="DeclarationNumber" ColumnName="DeclarationNumber" />
+                <ScalarProperty Name="IssueDateTime" ColumnName="IssueDateTime" />
+                <ScalarProperty Name="TypeCode" ColumnName="TypeCode" />
+                <ScalarProperty Name="TaxationDateTime" ColumnName="TaxationDateTime" />
+                <ScalarProperty Name="ExternalDeclarationID" ColumnName="ExternalDeclarationID" />
+                <ScalarProperty Name="VersionID" ColumnName="VersionID" />
+                <ScalarProperty Name="ExpenseLoadingFactor" ColumnName="ExpenseLoadingFactor" />
+                <ScalarProperty Name="AutonomyRegionType" ColumnName="AutonomyRegionType" />
+                <ScalarProperty Name="TehilaDeclarationID" ColumnName="TehilaDeclarationID" />
+                <ScalarProperty Name="ReleaseDateTime" ColumnName="ReleaseDateTime" />
+                <ScalarProperty Name="TotalDealValueAmountNIS" ColumnName="TotalDealValueAmountNIS" />
+                <ScalarProperty Name="CifValueNIS" ColumnName="CifValueNIS" />
+                <ScalarProperty Name="TaxAssessedAmount" ColumnName="TaxAssessedAmount" />
+                <ScalarProperty Name="AgentID" ColumnName="AgentID" />
+                <ScalarProperty Name="RoleCode" ColumnName="RoleCode" />
+                <ScalarProperty Name="GovernmentProcedure" ColumnName="GovernmentProcedure" />
+                <ScalarProperty Name="ImporterID" ColumnName="ImporterID" />
+                <ScalarProperty Name="ImporterRoleCode" ColumnName="ImporterRoleCode" />
+                <ScalarProperty Name="EntitlementTypeCode" ColumnName="EntitlementTypeCode" />
+                <ScalarProperty Name="IssueLocation" ColumnName="IssueLocation" />
+                <ScalarProperty Name="ImporterName" ColumnName="ImporterName" />
+                <ScalarProperty Name="ImporterCountry" ColumnName="ImporterCountry" />
+                <ScalarProperty Name="PreviousDocument" ColumnName="PreviousDocument" />
+                <ScalarProperty Name="PreviousDocumentType" ColumnName="PreviousDocumentType" />
+                <ScalarProperty Name="CreateDateTime" ColumnName="CreateDateTime" />
+                <ScalarProperty Name="DeclarationStatusCode" ColumnName="DeclarationStatusCode" />
+                <ScalarProperty Name="CustomsStatus" ColumnName="CustomsStatus" />
+                <ScalarProperty Name="TotalMADDealValueAmountNIS" ColumnName="TotalMADDealValueAmountNIS" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DeclarationTaxes">
+            <EntityTypeMapping TypeName="CustomsExternalModel.DeclarationTaxes">
+              <MappingFragment StoreEntitySet="DeclarationTaxes">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DeclarationId" ColumnName="DeclarationId" />
+                <ScalarProperty Name="AdValoremTaxBaseAmount" ColumnName="AdValoremTaxBaseAmount" />
+                <ScalarProperty Name="TaxTypeCode" ColumnName="TaxTypeCode" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="DeferedTaxAmount" ColumnName="DeferedTaxAmount" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DocumentAttribute">
+            <EntityTypeMapping TypeName="CustomsExternalModel.DocumentAttribute">
+              <MappingFragment StoreEntitySet="DocumentAttribute">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="PointerID" ColumnName="PointerID" />
+                <ScalarProperty Name="DocID" ColumnName="DocID" />
+                <ScalarProperty Name="Attribute" ColumnName="Attribute" />
+                <ScalarProperty Name="Attribute_Vlaue" ColumnName="Attribute_Vlaue" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Documents">
+            <EntityTypeMapping TypeName="CustomsExternalModel.Documents">
+              <MappingFragment StoreEntitySet="Documents">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="Code" ColumnName="Code" />
+                <ScalarProperty Name="URL" ColumnName="URL" />
+                <ScalarProperty Name="FileName" ColumnName="FileName" />
+                <ScalarProperty Name="DocumentType" ColumnName="DocumentType" />
+                <ScalarProperty Name="CustomsId" ColumnName="CustomsId" />
+                <ScalarProperty Name="InternalID" ColumnName="InternalID" />
+                <ScalarProperty Name="CustomsStatus" ColumnName="CustomsStatus" />
+                <ScalarProperty Name="ErrorDesc" ColumnName="ErrorDesc" />
+                <ScalarProperty Name="RelatedEntity" ColumnName="RelatedEntity" />
+                <ScalarProperty Name="RelatedID" ColumnName="RelatedID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Registration">
+            <EntityTypeMapping TypeName="CustomsExternalModel.Registration">
+              <MappingFragment StoreEntitySet="Registration">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="RowId" ColumnName="RowId" />
+                <ScalarProperty Name="FirstName" ColumnName="FirstName" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="CustomerType" ColumnName="CustomerType" />
+                <ScalarProperty Name="Mobile" ColumnName="Mobile" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="AllowPromotion" ColumnName="AllowPromotion" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SupplierInvoiceItems">
+            <EntityTypeMapping TypeName="CustomsExternalModel.SupplierInvoiceItems">
+              <MappingFragment StoreEntitySet="SupplierInvoiceItems">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DeclarationId" ColumnName="DeclarationId" />
+                <ScalarProperty Name="SupplierInvoiceId" ColumnName="SupplierInvoiceId" />
+                <ScalarProperty Name="LineNumber" ColumnName="LineNumber" />
+                <ScalarProperty Name="CustomsBookType" ColumnName="CustomsBookType" />
+                <ScalarProperty Name="TaxExemptCode" ColumnName="TaxExemptCode" />
+                <ScalarProperty Name="OptionalTama" ColumnName="OptionalTama" />
+                <ScalarProperty Name="SalesTaxExemptionType" ColumnName="SalesTaxExemptionType" />
+                <ScalarProperty Name="IsUsed" ColumnName="IsUsed" />
+                <ScalarProperty Name="CustomsValueAmount" ColumnName="CustomsValueAmount" />
+                <ScalarProperty Name="AmountType" ColumnName="AmountType" />
+                <ScalarProperty Name="ClassificationID" ColumnName="ClassificationID" />
+                <ScalarProperty Name="ClassificationIdentificationTypeCode" ColumnName="ClassificationIdentificationTypeCode" />
+                <ScalarProperty Name="TariffQuantity" ColumnName="TariffQuantity" />
+                <ScalarProperty Name="OriginCountryCode" ColumnName="OriginCountryCode" />
+                <ScalarProperty Name="DutyRegimeCode" ColumnName="DutyRegimeCode" />
+                <ScalarProperty Name="MeasureQualifier" ColumnName="MeasureQualifier" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="SupplierInvoices">
+            <EntityTypeMapping TypeName="CustomsExternalModel.SupplierInvoices">
+              <MappingFragment StoreEntitySet="SupplierInvoices">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="DeclarationId" ColumnName="DeclarationId" />
+                <ScalarProperty Name="SequenceNumeric" ColumnName="SequenceNumeric" />
+                <ScalarProperty Name="InvoiceNumber" ColumnName="InvoiceNumber" />
+                <ScalarProperty Name="IssueDateTime" ColumnName="IssueDateTime" />
+                <ScalarProperty Name="InvoiceTypeCode" ColumnName="InvoiceTypeCode" />
+                <ScalarProperty Name="IsPrefarenceDocumentInd" ColumnName="IsPrefarenceDocumentInd" />
+                <ScalarProperty Name="PrefarenceDocumentType" ColumnName="PrefarenceDocumentType" />
+                <ScalarProperty Name="PaymentType" ColumnName="PaymentType" />
+                <ScalarProperty Name="InvoiceAmount" ColumnName="InvoiceAmount" />
+                <ScalarProperty Name="RateNumeric" ColumnName="RateNumeric" />
+                <ScalarProperty Name="SupplierID" ColumnName="SupplierID" />
+                <ScalarProperty Name="TradeTermsConditionCode" ColumnName="TradeTermsConditionCode" />
+                <ScalarProperty Name="LocationID" ColumnName="LocationID" />
+                <ScalarProperty Name="CurrencyCode" ColumnName="CurrencyCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

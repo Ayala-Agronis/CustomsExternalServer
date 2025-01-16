@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="6977237c7c6945e7b98be6399d30164a" Name="Diagram1">
+        <EntityTypeShape EntityType="CustomsExternalModel.ConsignmentPackagesMeasures" Width="1.5" PointX="3.5" PointY="8" IsExpanded="true" />
+        <EntityTypeShape EntityType="CustomsExternalModel.ConsignmentRegisteredFacilities" Width="1.5" PointX="5.75" PointY="6.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="CustomsExternalModel.Consignments" Width="1.5" PointX="3" PointY="12.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="CustomsExternalModel.Declarations" Width="1.5" PointX="0.75" PointY="5.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="CustomsExternalModel.DeclarationTaxes" Width="1.5" PointX="0.875" PointY="14.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="CustomsExternalModel.DocumentAttribute" Width="1.5" PointX="0.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="CustomsExternalModel.Documents" Width="1.5" PointX="2.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="CustomsExternalModel.Registration" Width="1.5" PointX="4.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="CustomsExternalModel.SupplierInvoiceItems" Width="1.5" PointX="2.75" PointY="17.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="CustomsExternalModel.SupplierInvoices" Width="1.5" PointX="0.875" PointY="17.125" IsExpanded="true" />
+        <AssociationConnector Association="CustomsExternalModel.FK_ConsignmentPackagesMeasures_Consignments_ConsignmentId" ManuallyRouted="false" />
+        <AssociationConnector Association="CustomsExternalModel.FK_ConsignmentPackagesMeasures_Declarations_DeclarationId" ManuallyRouted="false" />
+        <AssociationConnector Association="CustomsExternalModel.FK_ConsignmentRegisteredFacilities_Consignments_ConsignmentId" ManuallyRouted="false" />
+        <AssociationConnector Association="CustomsExternalModel.FK_ConsignmentRegisteredFacilities_Declarations_DeclarationId" ManuallyRouted="false" />
+        <AssociationConnector Association="CustomsExternalModel.FK_Consignments_Declarations_DeclarationId" ManuallyRouted="false" />
+        <AssociationConnector Association="CustomsExternalModel.FK_DeclarationTaxes_Declarations_DeclarationId" ManuallyRouted="false" />
+        <AssociationConnector Association="CustomsExternalModel.FK_SupplierInvoices_Declarations_DeclarationId" ManuallyRouted="false" />
+        <AssociationConnector Association="CustomsExternalModel.FK_SupplierInvoiceItems_SupplierInvoices_SupplierInvoiceId" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

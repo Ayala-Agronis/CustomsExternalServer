@@ -12,6 +12,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System;
 using dotenv.net;
+using System.IO;
+using System.Xml.Linq;
 
 namespace CustomsExternal.Controllers
 {
@@ -20,16 +22,19 @@ namespace CustomsExternal.Controllers
         private CustomsExternalEntities db = new CustomsExternalEntities();
 
         private const string TokenUrl = "https://oauth2.googleapis.com/token";
-        private string RedirectUri = "http://localhost:4200/callback";
+        private string RedirectUri;
+
         private string ClientId;
         private string ClientSecret;
 
         public GoogleLoginController()
-        {
-            DotEnv.Load();
+        {       
+            var envFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
+            DotEnv.Load(options: new DotEnvOptions(envFilePaths: new[] { envFilePath }));
+
             ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID");
             ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET");
-           
+            RedirectUri = Environment.GetEnvironmentVariable("REDIRECT_URI");                    
         }
 
         public class Request
@@ -38,7 +43,6 @@ namespace CustomsExternal.Controllers
         }
        
         
-        //[System.Web.Http.Route("api/GoogleLogin/auth")]
         [System.Web.Http.Route("api/GoogleLogin/auth")]
         [System.Web.Http.HttpPost]
         public async Task<object> GetAccessTokenAsync(Request request)

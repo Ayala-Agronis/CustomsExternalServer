@@ -35,5 +35,7 @@ namespace CustomsExternal
         public virtual DbSet<Registration> Registration { get; set; }
         public virtual DbSet<SupplierInvoiceItems> SupplierInvoiceItems { get; set; }
         public virtual DbSet<SupplierInvoices> SupplierInvoices { get; set; }
+        public virtual DbSet<ChangeLog> ChangeLog { get; set; }
+        public virtual DbSet<LoginHistory> LoginHistory { get; set; }
     }
 }

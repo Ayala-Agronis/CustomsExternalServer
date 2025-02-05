@@ -18,21 +18,28 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using dotenv.net;
 using Google.Apis.Auth.OAuth2;
+using System.IO;
+using System.Data.Entity;
+using OpenQA.Selenium.DevTools.V129.Database;
+using CustomsExternal.Services;
+using System.Web;
 
 namespace CustomsExternal.Controllers
 {
     public class UserController : ApiController
     {
         private CustomsExternalEntities db = new CustomsExternalEntities();
-        //private readonly IConfiguration _configuration;
+        private ChangeLogService changeLogService = new ChangeLogService();
+
         private string key;
         private string issuer;
 
         public UserController()
         {
-            DotEnv.Load();
-            //key = Environment.GetEnvironmentVariable("JwtKey");
-            //issuer = Environment.GetEnvironmentVariable("JwtIssuer");
+            var envFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
+            DotEnv.Load(options: new DotEnvOptions(envFilePaths: new[] { envFilePath }));
+            key = Environment.GetEnvironmentVariable("JwtKey");
+            issuer = Environment.GetEnvironmentVariable("JwtIssuer");
             key = "35GadUCymdzSR6PY6SjLTpDWNS6snwZNrEvdCwfq";
             issuer = "http://localhost/";
         }
@@ -49,6 +56,11 @@ namespace CustomsExternal.Controllers
         [HttpPost]
         public IHttpActionResult Post(Registration registration)
         {
+            if (!IdValidator.IsValidId(registration.Id))
+            {
+                return BadRequest(".תעודת זהות אינה תקינה");
+            }
+
             bool emailSent = SendEmailToUser(registration);
 
             if (!emailSent)
@@ -60,14 +72,58 @@ namespace CustomsExternal.Controllers
             db.SaveChanges();
 
             return Ok(registration);
-            //return CreatedAtAction(nameof(GetById), new { id = registration.RowId }, registration.RowId);
+        }
+
+        // PUT api/<UserController>/5
+        [HttpPut]
+        public IHttpActionResult Put(int id, Registration user)
+        {
+            Registration oldValue = db.Registration.Find(id);
+
+            string oldValueString = Newtonsoft.Json.JsonConvert.SerializeObject(oldValue);
+            string newValueString = Newtonsoft.Json.JsonConvert.SerializeObject(user);
+
+            ChangeLog changeLog = new ChangeLog
+            {
+                Action = "put",
+                Entity = "Registration",
+                Timestamp = DateTime.Now,
+                OldValue = oldValueString,
+                NewValue = newValueString,
+                UserId = user.Id
+            };
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            if (id != user.RowId)
+            {
+                return BadRequest();
+            }
+
+            //db.Entry(user).State = EntityState.Modified;
+            db.Entry(oldValue).CurrentValues.SetValues(user);
+
+
+            try
+            {
+                db.SaveChanges();
+                changeLogService.LogChange(changeLog);
+
+            }
+            catch
+            {
+                return BadRequest("An error occurred while saving the user data.");
+            }
+            return Ok(user);
         }
 
         public Object GetToken(string userId, string email)
         {
-            //var key = ConfigurationManager.AppSettings["JwtKey"];
-
-            //var issuer = ConfigurationManager.AppSettings["JwtIssuer"];
+            //    key = Environment.GetEnvironmentVariable("JwtKey");
+            //    issuer = Environment.GetEnvironmentVariable("JwtIssuer");
 
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
@@ -83,8 +139,8 @@ namespace CustomsExternal.Controllers
             var token = new JwtSecurityToken(issuer, //Issure    
                             issuer,  //Audience    
                             permClaims,
-                            //expires: DateTime.Now.AddDays(1),
-                            expires: DateTime.Now.AddMinutes(1),
+                            expires: DateTime.Now.AddDays(1),
+                            //expires: DateTime.Now.AddMinutes(1),
                             signingCredentials: credentials);
             var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
             //return new { data = jwt_token };
@@ -116,9 +172,30 @@ namespace CustomsExternal.Controllers
             }
 
 
-            //return Ok(user);
+            LoginHistory login = new LoginHistory
+            {
+                UserId = user.Id,
+                IpAddress = GetUserIpAddress(),
+                LoginTime = DateTime.Now,
+            };
+
+            db.LoginHistory.Add(login);
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return InternalServerError(ex);
+            }
+
             var token = GetToken(user.RowId.ToString(), user.Email);
-            return Ok(new { token = token });
+            return Ok(new
+            {
+                token = token,
+                user = user
+            });
         }
 
         [HttpPost]
@@ -135,11 +212,6 @@ namespace CustomsExternal.Controllers
             return Ok(user);
         }
 
-        // PUT api/<UserController>/5
-        [HttpPut]
-        public void Put(int id, string value)
-        {
-        }
 
         // DELETE api/<UserController>/5
         [HttpDelete]
@@ -177,41 +249,6 @@ namespace CustomsExternal.Controllers
                 return false;
             }
         }
-
-        //private async Task SendEmailToUser(Registration registration)
-        //{
-        //    try
-        //    {
-        //        string baseUrl = System.Configuration.ConfigurationManager.AppSettings["BaseUrl"];
-        //        string encodeEmail = Convert.ToBase64String(Encoding.UTF8.GetBytes(registration.Email));
-        //        string confirmationLink = $"{baseUrl}/api/User/ConfirmEmail?email={encodeEmail}";
-
-        //        using (var client = new SmtpClient())
-        //        {
-        //            await client.ConnectAsync("smtp.gmail.com", 587, SecureSocketOptions.StartTls);
-        //            await client.AuthenticateAsync("moveappdriver@gmail.com", "wnxl xcik hptq xusj");
-
-        //            var message = new MimeMessage();
-        //            message.From.Add(new MailboxAddress("YourApp", "moveappdriver@gmail.com"));
-        //            message.To.Add(MailboxAddress.Parse(registration.Email));
-        //            message.Subject = "Confirm Your Registration";
-
-        //            message.Body = new TextPart("html")
-        //            {
-        //                Text = $"<p>שלום {registration.FirstName} {registration.LastName},</p><p>אנא אשר את הרישום שלך על ידי לחיצה על הקישור למטה:</p><a href='{confirmationLink}'>אשר את הרישום</a>"
-        //            };
-
-        //            await client.SendAsync(message);
-        //            await client.DisconnectAsync(true);
-
-        //            Console.WriteLine("Confirmation email sent successfully!");
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        Console.WriteLine($"Failed to send email: {ex.Message}");
-        //    }
-        //}
 
         // GET api/<UserController>/ConfirmEmail
         [HttpGet]
@@ -255,6 +292,26 @@ namespace CustomsExternal.Controllers
                 var hash = sha256.ComputeHash(bytes);
                 return Convert.ToBase64String(hash).Replace("/", "").Replace("+", "").Substring(0, 20);
             }
+        }
+
+        public string GetUserIpAddress()
+        {
+            string ipAddress = HttpContext.Current.Request.UserHostAddress;
+
+            string forwardedFor = HttpContext.Current.Request.Headers["X-Forwarded-For"];
+            if (!string.IsNullOrEmpty(forwardedFor))
+            {
+                ipAddress = forwardedFor.Split(',')[0];
+            }
+            if (ipAddress == "::1")
+            {
+                ipAddress = "127.0.0.1";
+            }
+            if (ipAddress != "127.0.0.1")
+            {
+                Console.WriteLine(ipAddress);
+            }
+            return ipAddress;
         }
 
         public class LoginRequest

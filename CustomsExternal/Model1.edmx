@@ -5,6 +5,18 @@
     <!-- SSDL content -->
     <edmx:StorageModels>
     <Schema Namespace="CustomsExternalModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="ChangeLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="varchar" MaxLength="9" />
+          <Property Name="Entity" Type="varchar" MaxLength="255" />
+          <Property Name="OldValue" Type="text" />
+          <Property Name="NewValue" Type="text" />
+          <Property Name="Action" Type="varchar" MaxLength="255" />
+          <Property Name="Timestamp" Type="datetime" />
+        </EntityType>
         <EntityType Name="ConsignmentPackagesMeasures">
           <Key>
             <PropertyRef Name="Id" />
@@ -123,6 +135,15 @@
           <Property Name="RelatedEntity" Type="numeric" Precision="18" Scale="0" />
           <Property Name="RelatedID" Type="numeric" Precision="18" Scale="0" />
         </EntityType>
+        <EntityType Name="LoginHistory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="varchar" MaxLength="10" Nullable="false" />
+          <Property Name="IpAddress" Type="varchar" MaxLength="255" Nullable="false" />
+          <Property Name="LoginTime" Type="datetime" Nullable="false" />
+        </EntityType>
         <EntityType Name="Registration">
           <Key>
             <PropertyRef Name="RowId" />
@@ -135,7 +156,7 @@
           <Property Name="Email" Type="varchar" MaxLength="100" />
           <Property Name="AllowPromotion" Type="bit" />
           <Property Name="Password" Type="varchar" MaxLength="30" />
-          <Property Name="Id" Type="int" />
+          <Property Name="Id" Type="varchar" MaxLength="9" />
         </EntityType>
         <EntityType Name="SupplierInvoiceItems">
           <Key>
@@ -288,6 +309,7 @@
           </ReferentialConstraint>
         </Association>
         <EntityContainer Name="CustomsExternalModelStoreContainer">
+          <EntitySet Name="ChangeLog" EntityType="Self.ChangeLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ConsignmentPackagesMeasures" EntityType="Self.ConsignmentPackagesMeasures" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ConsignmentRegisteredFacilities" EntityType="Self.ConsignmentRegisteredFacilities" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Consignments" EntityType="Self.Consignments" Schema="dbo" store:Type="Tables" />
@@ -295,6 +317,7 @@
           <EntitySet Name="DeclarationTaxes" EntityType="Self.DeclarationTaxes" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="DocumentAttribute" EntityType="Self.DocumentAttribute" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Documents" EntityType="Self.Documents" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LoginHistory" EntityType="Self.LoginHistory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Registration" EntityType="Self.Registration" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SupplierInvoiceItems" EntityType="Self.SupplierInvoiceItems" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SupplierInvoices" EntityType="Self.SupplierInvoices" Schema="dbo" store:Type="Tables" />
@@ -478,7 +501,7 @@
           <Property Name="Email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
           <Property Name="AllowPromotion" Type="Boolean" />
           <Property Name="Password" Type="String" MaxLength="30" FixedLength="false" Unicode="false" />
-          <Property Name="Id" Type="Int32" />
+          <Property Name="Id" Type="String" MaxLength="9" Unicode="false" FixedLength="false" />
         </EntityType>
         <EntityType Name="SupplierInvoiceItems">
           <Key>
@@ -676,7 +699,30 @@
             <End Role="SupplierInvoices" EntitySet="SupplierInvoices" />
             <End Role="SupplierInvoiceItems" EntitySet="SupplierInvoiceItems" />
           </AssociationSet>
+          <EntitySet Name="ChangeLog" EntityType="CustomsExternalModel.ChangeLog" />
+          <EntitySet Name="LoginHistory" EntityType="CustomsExternalModel.LoginHistory" />
         </EntityContainer>
+        <EntityType Name="ChangeLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="String" MaxLength="9" Unicode="false" FixedLength="false" />
+          <Property Name="Entity" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="OldValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="NewValue" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Action" Type="String" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="Timestamp" Type="DateTime" Precision="3" />
+        </EntityType>
+        <EntityType Name="LoginHistory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="false" />
+          <Property Name="IpAddress" Type="String" Nullable="false" MaxLength="255" FixedLength="false" Unicode="false" />
+          <Property Name="LoginTime" Type="DateTime" Nullable="false" Precision="3" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -864,6 +910,29 @@
                 <ScalarProperty Name="TradeTermsConditionCode" ColumnName="TradeTermsConditionCode" />
                 <ScalarProperty Name="LocationID" ColumnName="LocationID" />
                 <ScalarProperty Name="CurrencyCode" ColumnName="CurrencyCode" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ChangeLog">
+            <EntityTypeMapping TypeName="CustomsExternalModel.ChangeLog">
+              <MappingFragment StoreEntitySet="ChangeLog">
+                <ScalarProperty Name="Timestamp" ColumnName="Timestamp" />
+                <ScalarProperty Name="Action" ColumnName="Action" />
+                <ScalarProperty Name="NewValue" ColumnName="NewValue" />
+                <ScalarProperty Name="OldValue" ColumnName="OldValue" />
+                <ScalarProperty Name="Entity" ColumnName="Entity" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LoginHistory">
+            <EntityTypeMapping TypeName="CustomsExternalModel.LoginHistory">
+              <MappingFragment StoreEntitySet="LoginHistory">
+                <ScalarProperty Name="LoginTime" ColumnName="LoginTime" />
+                <ScalarProperty Name="IpAddress" ColumnName="IpAddress" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -23,6 +23,8 @@
         <AssociationConnector Association="CustomsExternalModel.FK_DeclarationTaxes_Declarations_DeclarationId" ManuallyRouted="false" />
         <AssociationConnector Association="CustomsExternalModel.FK_SupplierInvoices_Declarations_DeclarationId" ManuallyRouted="false" />
         <AssociationConnector Association="CustomsExternalModel.FK_SupplierInvoiceItems_SupplierInvoices_SupplierInvoiceId" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="CustomsExternalModel.ChangeLog" Width="1.5" PointX="7.375" PointY="0.75" />
+        <EntityTypeShape EntityType="CustomsExternalModel.LoginHistory" Width="1.5" PointX="8.375" PointY="4.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

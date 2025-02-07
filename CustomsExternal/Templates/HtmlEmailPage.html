@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<html lang="he">
+<!--<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אישור הרשמה - CustomsIL</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #e8f1ff;
+            margin: 0;
+            padding: 0;
+        }
+
+        .email-container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            width: 150px;
+            margin: 20px auto;
+        }
+
+        .box-image {
+            width: 120px;
+            margin: 20px auto;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        p {
+            color: #555;
+            font-size: 16px;
+        }
+
+        .confirm-button {
+            display: inline-block;
+            background-color: #007bff;
+            color: white;
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 5px;
+            text-decoration: none;
+            margin-top: 20px;
+        }
+
+            .confirm-button:hover {
+                background-color: #0056b3;
+            }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <img src="/Images/logo.png" alt="CustomsIL Logo" class="logo">
+
+        <h2> {FirstName} {LastName}שלום</h2>
+        <p>אנא אשר את הרישום שלך על ידי לחיצה על הקישור למטה:</p>
+
+        <img src="/Images/box.png" alt="Box Image" class="box-image">
+        <a href="{confirmationLink}" class="confirm-button">אשר את הרישום</a>
+    </div>
+</body>
+</html>-->
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f6ff;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('cid:background');
+            background-size: cover;
+            background-position: center;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 100px auto;
+            padding: 40px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .logo {
+            margin-top: 20px;
+        }
+
+        .box {
+            display: block;
+            margin: 20px auto;
+            width: 150px;
+        }
+
+        .content {
+            margin-top: 20px;
+            font-size: 18px;
+            direction: rtl;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            font-size: 18px;
+            color: #fff;
+            background-color: #007bff;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>-
+    <div class='background'></div>
+    <div class='container'>
+        <img src='cid:logo' alt='CustomsIL' class='logo' width='150' />
+        <img src='cid:box' alt='Box' class='box' />
+        <div class='content'>
+            <h2>שלום {FirstName} {LastName}</h2>
+            <p>אנא אשר את הרישום שלך על ידי לחיצה על הכפתור למטה</p>
+            <a href='{confirmationLink}' class='button'> אישור </a>
+        </div>
+    </div>
+</body>
+</html>
+

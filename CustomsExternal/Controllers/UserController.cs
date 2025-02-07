@@ -23,6 +23,7 @@ using System.Data.Entity;
 using OpenQA.Selenium.DevTools.V129.Database;
 using CustomsExternal.Services;
 using System.Web;
+using System.Net.Mime;
 
 namespace CustomsExternal.Controllers
 {
@@ -232,14 +233,164 @@ namespace CustomsExternal.Controllers
                     EnableSsl = true
                 };
 
+                string emailBody1 = $@"
+        <html>
+        <head>
+            <style>
+                body {{
+                    font-family: Arial, sans-serif;
+                    background-color: #f0f6ff;
+                    text-align: center;
+                }}
+                .container {{
+                    max-width: 600px;
+                    margin: 50px auto;
+                    padding: 20px;
+                    background-color: #ffffff;
+                    border-radius: 10px;
+                    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+                }}
+                .logo {{
+                    margin-top: 20px;
+                }}
+                .content {{
+                    margin-top: 20px;
+                    font-size: 18px;
+                }}
+                .button {{
+                    display: inline-block;
+                    padding: 10px 20px;
+                    font-size: 18px;
+                    color: #fff;
+                    background-color: #007bff;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    margin-top: 20px;
+                }}
+            </style>
+        </head>
+        <body>
+            <div class='container'>
+                <img src='{baseUrl}/images/logo.png' alt='CustomsIL' class='logo' width='150'/>
+                <div class='content'>
+                    <h2>שלום {registration.FirstName} {registration.LastName}</h2>
+                    <p>אנא אשר את הרישום שלך על ידי לחיצה על הכפתור למטה</p>
+                    <a href='{confirmationLink}' class='button'>אשר את הרישום</a>
+                </div>
+            </div>
+        </body>
+        </html>";
+                string projectRoot = AppDomain.CurrentDomain.BaseDirectory;
+                string emailBody = "";
+                string emailPath = Path.Combine(projectRoot, "Templates", "HtmlEmailPage.html");
+
+                if (File.Exists(emailPath))
+                {
+                    emailBody = File.ReadAllText(emailPath);
+                }
+                else
+                {
+                    Console.WriteLine("⚠ הקובץ לא נמצא בנתיב: " + emailPath);
+                }
+
+                emailBody = emailBody.Replace("{FirstName}", registration.FirstName)
+                     .Replace("{LastName}", registration.LastName)
+                     .Replace("{confirmationLink}", confirmationLink);
+                //var message = new MailMessage
+                //{
+                //    From = new MailAddress("moveappdriver@gmail.com", "customsIL"),
+                //    Subject = "אישור הרשמה",
+                //    Body = emailBody,
+                //    IsBodyHtml = true
+                //};
+        //        string emailBody = $@"
+        //<html>
+        //<head>
+        //    <style>
+        //        body {{
+        //            font-family: Arial, sans-serif;
+        //            background-color: #f0f6ff;
+        //            text-align: center;
+        //        }}
+        //        .container {{
+        //            max-width: 600px;
+        //            margin: 50px auto;
+        //            padding: 20px;
+        //            background-color: #ffffff;
+        //            border-radius: 10px;
+        //            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        //        }}
+        //        .logo {{
+        //            margin-top: 20px;
+        //        }}
+        //        .content {{
+        //            margin-top: 20px;
+        //            font-size: 18px;
+        //        }}
+        //        .button {{
+        //            display: inline-block;
+        //            padding: 10px 20px;
+        //            font-size: 18px;
+        //            color: #fff;
+        //            background-color: #007bff;
+        //            text-decoration: none;
+        //            border-radius: 5px;
+        //            margin-top: 20px;
+        //        }}
+        //    </style>
+        //</head>
+        //<body>
+        //    <div class='container'>
+        //        <img src='cid:logo' alt='CustomsIL' class='logo' width='150'/>
+        //        <div class='content'>
+        //            <h2>שלום {registration.FirstName} {registration.LastName}</h2>
+        //            <p>אנא אשר את הרישום שלך על ידי לחיצה על הכפתור למטה</p>
+        //            <a href='{confirmationLink}' class='button'>אשר את הרישום</a>
+        //        </div>
+        //    </div>
+        //</body>
+        //</html>";
+
+                // יצירת אובייקט MailMessage
                 var message = new MailMessage
                 {
-                    From = new MailAddress("moveappdriver@gmail.com", "customsIL"),
+                    From = new MailAddress("moveappdriver@gmail.com", "CustomsIL"),
                     Subject = "אישור הרשמה",
-                    Body = $"<p>שלום {registration.FirstName} {registration.LastName},</p><p>אנא אשר את הרישום שלך על ידי לחיצה על הקישור למטה:</p><a href='{confirmationLink}'>אשר את הרישום</a>",
+                    Body = emailBody,
                     IsBodyHtml = true
                 };
 
+                // הגדרת משאב התמונה כ-LinkedResource
+                string imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "logo.png");
+                LinkedResource logoImage = new LinkedResource(imagePath)
+                {
+                    ContentId = "logo",
+                    TransferEncoding = TransferEncoding.Base64,
+                    ContentType = new System.Net.Mime.ContentType("image/png")
+                };
+
+                string imagePath2 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "background.png");
+                LinkedResource logoImage2 = new LinkedResource(imagePath2)
+                {
+                    ContentId = "background",
+                    TransferEncoding = TransferEncoding.Base64,
+                    ContentType = new System.Net.Mime.ContentType("image/png")
+                };
+
+                string imagePath3 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "box.png");
+                LinkedResource logoImage3 = new LinkedResource(imagePath3)
+                {
+                    ContentId = "box",
+                    TransferEncoding = TransferEncoding.Base64,
+                    ContentType = new System.Net.Mime.ContentType("image/png")
+                };
+
+                // הוספת התמונה למייל
+                AlternateView htmlView = AlternateView.CreateAlternateViewFromString(emailBody, null, "text/html");
+                htmlView.LinkedResources.Add(logoImage);
+                htmlView.LinkedResources.Add(logoImage2);
+                htmlView.LinkedResources.Add(logoImage3);
+                message.AlternateViews.Add(htmlView);
                 message.To.Add(registration.Email);
                 client.Send(message);
                 return true;

@@ -24,6 +24,7 @@ using OpenQA.Selenium.DevTools.V129.Database;
 using CustomsExternal.Services;
 using System.Web;
 using System.Net.Mime;
+using System.Net.Http;
 
 namespace CustomsExternal.Controllers
 {
@@ -233,53 +234,6 @@ namespace CustomsExternal.Controllers
                     EnableSsl = true
                 };
 
-                string emailBody1 = $@"
-        <html>
-        <head>
-            <style>
-                body {{
-                    font-family: Arial, sans-serif;
-                    background-color: #f0f6ff;
-                    text-align: center;
-                }}
-                .container {{
-                    max-width: 600px;
-                    margin: 50px auto;
-                    padding: 20px;
-                    background-color: #ffffff;
-                    border-radius: 10px;
-                    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-                }}
-                .logo {{
-                    margin-top: 20px;
-                }}
-                .content {{
-                    margin-top: 20px;
-                    font-size: 18px;
-                }}
-                .button {{
-                    display: inline-block;
-                    padding: 10px 20px;
-                    font-size: 18px;
-                    color: #fff;
-                    background-color: #007bff;
-                    text-decoration: none;
-                    border-radius: 5px;
-                    margin-top: 20px;
-                }}
-            </style>
-        </head>
-        <body>
-            <div class='container'>
-                <img src='{baseUrl}/images/logo.png' alt='CustomsIL' class='logo' width='150'/>
-                <div class='content'>
-                    <h2>שלום {registration.FirstName} {registration.LastName}</h2>
-                    <p>אנא אשר את הרישום שלך על ידי לחיצה על הכפתור למטה</p>
-                    <a href='{confirmationLink}' class='button'>אשר את הרישום</a>
-                </div>
-            </div>
-        </body>
-        </html>";
                 string projectRoot = AppDomain.CurrentDomain.BaseDirectory;
                 string emailBody = "";
                 string emailPath = Path.Combine(projectRoot, "Templates", "HtmlEmailPage.html");
@@ -290,68 +244,13 @@ namespace CustomsExternal.Controllers
                 }
                 else
                 {
-                    Console.WriteLine("⚠ הקובץ לא נמצא בנתיב: " + emailPath);
+                    Console.WriteLine(" הקובץ לא נמצא בנתיב: " + emailPath);
                 }
 
                 emailBody = emailBody.Replace("{FirstName}", registration.FirstName)
                      .Replace("{LastName}", registration.LastName)
                      .Replace("{confirmationLink}", confirmationLink);
-                //var message = new MailMessage
-                //{
-                //    From = new MailAddress("moveappdriver@gmail.com", "customsIL"),
-                //    Subject = "אישור הרשמה",
-                //    Body = emailBody,
-                //    IsBodyHtml = true
-                //};
-        //        string emailBody = $@"
-        //<html>
-        //<head>
-        //    <style>
-        //        body {{
-        //            font-family: Arial, sans-serif;
-        //            background-color: #f0f6ff;
-        //            text-align: center;
-        //        }}
-        //        .container {{
-        //            max-width: 600px;
-        //            margin: 50px auto;
-        //            padding: 20px;
-        //            background-color: #ffffff;
-        //            border-radius: 10px;
-        //            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        //        }}
-        //        .logo {{
-        //            margin-top: 20px;
-        //        }}
-        //        .content {{
-        //            margin-top: 20px;
-        //            font-size: 18px;
-        //        }}
-        //        .button {{
-        //            display: inline-block;
-        //            padding: 10px 20px;
-        //            font-size: 18px;
-        //            color: #fff;
-        //            background-color: #007bff;
-        //            text-decoration: none;
-        //            border-radius: 5px;
-        //            margin-top: 20px;
-        //        }}
-        //    </style>
-        //</head>
-        //<body>
-        //    <div class='container'>
-        //        <img src='cid:logo' alt='CustomsIL' class='logo' width='150'/>
-        //        <div class='content'>
-        //            <h2>שלום {registration.FirstName} {registration.LastName}</h2>
-        //            <p>אנא אשר את הרישום שלך על ידי לחיצה על הכפתור למטה</p>
-        //            <a href='{confirmationLink}' class='button'>אשר את הרישום</a>
-        //        </div>
-        //    </div>
-        //</body>
-        //</html>";
 
-                // יצירת אובייקט MailMessage
                 var message = new MailMessage
                 {
                     From = new MailAddress("moveappdriver@gmail.com", "CustomsIL"),
@@ -360,7 +259,6 @@ namespace CustomsExternal.Controllers
                     IsBodyHtml = true
                 };
 
-                // הגדרת משאב התמונה כ-LinkedResource
                 string imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "logo.png");
                 LinkedResource logoImage = new LinkedResource(imagePath)
                 {
@@ -385,7 +283,6 @@ namespace CustomsExternal.Controllers
                     ContentType = new System.Net.Mime.ContentType("image/png")
                 };
 
-                // הוספת התמונה למייל
                 AlternateView htmlView = AlternateView.CreateAlternateViewFromString(emailBody, null, "text/html");
                 htmlView.LinkedResources.Add(logoImage);
                 htmlView.LinkedResources.Add(logoImage2);
@@ -421,7 +318,33 @@ namespace CustomsExternal.Controllers
             try
             {
                 db.SaveChanges();
-                return Ok("האימייל אושר בהצלחה. תודה!");
+                // Load the confirmation HTML page template
+                string projectRoot = AppDomain.CurrentDomain.BaseDirectory;
+                string htmlTemplatePath = Path.Combine(projectRoot, "Templates", "HtmlEmailAnswerPage.html");
+
+                if (!File.Exists(htmlTemplatePath))
+                {
+                    return InternalServerError(new Exception("Confirmation page template not found."));
+                }
+
+                string htmlContent = File.ReadAllText(htmlTemplatePath);
+               
+                string imageUrl = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "logo.png");
+                htmlContent = htmlContent.Replace("{logo}", imageUrl);
+
+                string boxImageUrl = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "box.png");
+                htmlContent = htmlContent.Replace("{box}", boxImageUrl);
+                //AlternateView htmlView = AlternateView.CreateAlternateViewFromString(emailBody, null, "text/html");
+                //htmlView.LinkedResources.Add(imageUrl);
+                //htmlView.LinkedResources.Add(boxImageUrl);
+
+                //return Content(HttpStatusCode.OK, htmlContent, "text/html");
+                var response = new HttpResponseMessage(HttpStatusCode.OK)
+                {
+                    Content = new StringContent(htmlContent, Encoding.UTF8, "text/html")
+                };
+
+                return ResponseMessage(response);
             }
             catch (Exception ex)
             {

@@ -1,9 +1,5 @@
 ﻿using Microsoft.Owin.Security.OAuth;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Web.Http;
-using System.Web.Http.Cors;
 
 namespace CustomsExternal
 {
@@ -11,8 +7,8 @@ namespace CustomsExternal
     {
         public static void Register(HttpConfiguration config)
         {
-            var cors = new EnableCorsAttribute("*", "*", "*");
-            config.EnableCors(cors);
+            // ❌ הסרנו את EnableCorsAttribute – CORS מנוהל רק דרך OWIN (Startup.cs)
+
             // Web API configuration and services
             var json = config.Formatters.JsonFormatter;
             json.SerializerSettings.PreserveReferencesHandling = Newtonsoft.Json.PreserveReferencesHandling.Objects;
@@ -26,10 +22,9 @@ namespace CustomsExternal
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
             config.SuppressDefaultHostAuthentication();
             config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
-            //config.SuppressDefaultHostAuthentication();
-            // config.Filters.Add(new HostAuthenticationFilter(OAuthDefaults.AuthenticationType));
         }
     }
 }

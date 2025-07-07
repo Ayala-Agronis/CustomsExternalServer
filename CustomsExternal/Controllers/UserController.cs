@@ -38,13 +38,15 @@ namespace CustomsExternal.Controllers
 
         public UserController()
         {
-            var envFilePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ".env");
-            DotEnv.Load(options: new DotEnvOptions(envFilePaths: new[] { envFilePath }));
-            key = Environment.GetEnvironmentVariable("JwtKey");
-            issuer = Environment.GetEnvironmentVariable("JwtIssuer");
-            key = "35GadUCymdzSR6PY6SjLTpDWNS6snwZNrEvdCwfq";
-            issuer = "http://localhost/";
+            // קודם ננסה מה־Environment (מומלץ ב־Azure), ואם אין – ניקח מה־Web.config
+            key = Environment.GetEnvironmentVariable("JwtSecretKey")
+                  ?? ConfigurationManager.AppSettings["JwtSecretKey"];
+
+            issuer = Environment.GetEnvironmentVariable("JwtIssuer")
+                     ?? ConfigurationManager.AppSettings["JwtIssuer"]
+                     ?? "http://localhost/";
         }
+
 
         [Authorize]
         public IHttpActionResult GetUsers()
@@ -53,22 +55,44 @@ namespace CustomsExternal.Controllers
             return Ok(users);
         }
 
-
-        // POST api/<UserController>
         [HttpPost]
         public IHttpActionResult Post(Registration registration)
         {
+            // בדיקת תקינות ת"ז
             if (!IdValidator.IsValidId(registration.Id))
             {
                 return BadRequest(".תעודת זהות אינה תקינה");
             }
 
-            bool emailSent = SendEmailToUser(registration);
+            // בדיקה אם כבר קיים משתמש עם אותו מייל/ת"ז/טלפון
+            bool emailExists = db.Registration.Any(r => r.Email == registration.Email);
+            bool idExists = db.Registration.Any(r => r.Id == registration.Id);
+            bool phoneExists = db.Registration.Any(r => r.Mobile == registration.Mobile);
 
+            if (emailExists && idExists && phoneExists)
+            {
+                return BadRequest("משתמש עם כתובת מייל, תעודת זהות ומספר טלפון אלו כבר קיים במערכת.");
+            }
+            else if (emailExists)
+            {
+                return BadRequest("כתובת מייל זו כבר רשומה במערכת.");
+            }
+            else if (idExists)
+            {
+                return BadRequest("תעודת זהות זו כבר רשומה במערכת.");
+            }
+            else if (phoneExists)
+            {
+                return BadRequest("מספר טלפון זה כבר רשום במערכת.");
+            }
+
+            // שליחת מייל
+            bool emailSent = SendEmailToUser(registration);
             if (!emailSent)
             {
-                return BadRequest("Failed to send confirmation email.");
+                return BadRequest("שליחת מייל אישור נכשלה.");
             }
+
             registration.AllowPromotion = false;
             db.Registration.Add(registration);
             db.SaveChanges();
@@ -76,11 +100,17 @@ namespace CustomsExternal.Controllers
             return Ok(registration);
         }
 
-        // PUT api/<UserController>/5
+
+        [Authorize]
         [HttpPut]
         public IHttpActionResult Put(int id, Registration user)
         {
-            Registration oldValue = db.Registration.Find(id);
+            var oldValue = db.Registration.Find(id);
+
+            if (oldValue == null)
+            {
+                return NotFound();
+            }
 
             string oldValueString = Newtonsoft.Json.JsonConvert.SerializeObject(oldValue);
             string newValueString = Newtonsoft.Json.JsonConvert.SerializeObject(user);
@@ -105,22 +135,40 @@ namespace CustomsExternal.Controllers
                 return BadRequest();
             }
 
-            //db.Entry(user).State = EntityState.Modified;
-            db.Entry(oldValue).CurrentValues.SetValues(user);
+            // בדיקה אם כתובת המייל כבר בשימוש על ידי משתמש אחר
+            if (db.Registration.Any(r => r.Email == user.Email && r.RowId != id))
+            {
+                return BadRequest("כתובת מייל זו כבר רשומה למשתמש אחר.");
+            }
 
+            // בדיקה אם תעודת הזהות כבר בשימוש על ידי משתמש אחר
+            if (db.Registration.Any(r => r.Id == user.Id && r.RowId != id))
+            {
+                return BadRequest("תעודת זהות זו כבר רשומה למשתמש אחר.");
+            }
+
+            // בדיקה אם מספר הטלפון כבר בשימוש על ידי משתמש אחר
+            if (db.Registration.Any(r => r.Mobile == user.Mobile && r.RowId != id))
+            {
+                return BadRequest("מספר טלפון זה כבר רשום למשתמש אחר.");
+            }
+
+            db.Entry(oldValue).CurrentValues.SetValues(user);
 
             try
             {
                 db.SaveChanges();
                 changeLogService.LogChange(changeLog);
-
             }
             catch
             {
-                return BadRequest("An error occurred while saving the user data.");
+                return BadRequest("אירעה שגיאה בעת שמירת נתוני המשתמש.");
             }
+
             return Ok(user);
         }
+
+
 
         public Object GetToken(string userId, string email)
         {
@@ -214,7 +262,7 @@ namespace CustomsExternal.Controllers
             return Ok(user);
         }
 
-
+        [Authorize]
         // DELETE api/<UserController>/5
         [HttpDelete]
         public void Delete(int id)
@@ -230,7 +278,7 @@ namespace CustomsExternal.Controllers
 
                 var client = new System.Net.Mail.SmtpClient("smtp.gmail.com", 587)
                 {
-                    Credentials = new NetworkCredential("moveappdriver@gmail.com", "wnxl xcik hptq xusj"),
+                    Credentials = new NetworkCredential("reg@agronis.com", "sowrwjjumfponoqf"),
                     EnableSsl = true
                 };
 
@@ -253,7 +301,7 @@ namespace CustomsExternal.Controllers
 
                 var message = new MailMessage
                 {
-                    From = new MailAddress("moveappdriver@gmail.com", "CustomsIL"),
+                    From = new MailAddress("reg@agronis.com", "CustomsIL"),
                     Subject = "אישור הרשמה",
                     Body = emailBody,
                     IsBodyHtml = true
@@ -305,6 +353,9 @@ namespace CustomsExternal.Controllers
         {
 
             string decodedEmail = DecodeEmail(email);
+            //הוספתי
+            System.Diagnostics.Debug.WriteLine("DECODED EMAIL: " + decodedEmail);
+
             var registration = db.Registration.FirstOrDefault(r => r.Email == decodedEmail);
 
 

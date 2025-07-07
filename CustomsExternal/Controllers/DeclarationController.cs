@@ -14,6 +14,8 @@ using System.Web.Http.Description;
 
 namespace CustomsExternal.Controllers
 {
+    [Authorize]
+
     public class DeclarationController : ApiController
     {
         private CustomsExternalEntities db = new CustomsExternalEntities();

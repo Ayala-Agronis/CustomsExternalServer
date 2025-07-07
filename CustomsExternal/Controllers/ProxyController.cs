@@ -17,6 +17,7 @@ using OpenQA.Selenium.Support.UI;
 
 namespace CustomsExternal.Controllers
 {
+    [Authorize]
     public class ProxyController : ApiController
     {
 

@@ -1,55 +1,86 @@
-﻿using dotenv.net;
+﻿using System;
+using System.Text;
 using DotNetEnv;
+using dotenv.net;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Owin.Cors;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Jwt;
 using Owin;
-using System;
-using System.Collections.Generic;
+using System.Web.Cors;
 using System.Configuration;
-using System.Linq;
-using System.Text;
-using System.Web;
-using static System.Net.WebRequestMethods;
 
 namespace CustomsExternal
 {
-
     public class Startup
     {
         public void Configuration(IAppBuilder app)
         {
+            // 1. טען משתני סביבה
             DotEnv.Load();
             Env.Load();
 
+            // 2. הגדר מדיניות CORS – ללא AllowAnyOrigin
+            var corsPolicy = new CorsPolicy
+            {
+                AllowAnyHeader = true,
+                AllowAnyMethod = true,
+                SupportsCredentials = true
+            };
 
-            //var jwtIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER");
-            //var jwtKey = Environment.GetEnvironmentVariable("JWT_KEY");
-            //var jwtIssuer = Env.GetString("JWT_ISSUER");
-            //var jwtKey = Env.GetString("JWT_KEY");
-            var jwtKey = "35GadUCymdzSR6PY6SjLTpDWNS6snwZNrEvdCwfq";
-            var jwtIssuer = "http://localhost/";
+            corsPolicy.Origins.Add("http://localhost:4200");
+            corsPolicy.Origins.Add("https://localhost:44308");
+            corsPolicy.Origins.Add("https://customsexternal20250624201845.azurewebsites.net");
 
-            //if (string.IsNullOrEmpty(jwtIssuer) || string.IsNullOrEmpty(jwtKey))
-            //{
-            //    throw new InvalidOperationException("JWT_ISSUER or JWT_KEY is not defined in the .env file.");
-            //}
-            app.UseJwtBearerAuthentication(
-                new JwtBearerAuthenticationOptions
+            app.UseCors(new CorsOptions
+            {
+                PolicyProvider = new CorsPolicyProvider
                 {
-                    AuthenticationMode = AuthenticationMode.Active,
-                    TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateIssuerSigningKey = true,                        
-                        ValidIssuer = jwtIssuer,
-                        ValidAudience = jwtIssuer,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
-                        ClockSkew = TimeSpan.Zero
-                    }
-                });
+                    PolicyResolver = context => System.Threading.Tasks.Task.FromResult(corsPolicy)
+                }
+            });
 
+            // 3. טיפול ב־OPTIONS
+            app.Use(async (context, next) =>
+            {
+                if (context.Request.Method == "OPTIONS")
+                {
+                    context.Response.StatusCode = 200;
+                    return;
+                }
+                await next.Invoke();
+            });
+
+            // ✅ 4. קריאת ערכים בבטחה מה־Environment או מה־Web.config
+            var jwtKey = Environment.GetEnvironmentVariable("JwtSecretKey")
+                         ?? ConfigurationManager.AppSettings["JwtSecretKey"];
+
+            var jwtIssuer = Environment.GetEnvironmentVariable("JwtIssuer")
+                            ?? ConfigurationManager.AppSettings["JwtIssuer"]
+                            ?? "http://localhost/";
+
+            if (string.IsNullOrWhiteSpace(jwtKey))
+            {
+                throw new Exception("Missing JWT secret key (JwtSecretKey).");
+            }
+
+            // 5. הגדרת אימות JWT
+            app.UseJwtBearerAuthentication(new JwtBearerAuthenticationOptions
+            {
+                AuthenticationMode = AuthenticationMode.Active,
+                TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = jwtIssuer,
+                    ValidAudience = jwtIssuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
+                    ClockSkew = TimeSpan.Zero
+                }
+            });
+
+            // 6. טיפול בשגיאות
             app.Use(async (context, next) =>
             {
                 try
@@ -61,7 +92,7 @@ namespace CustomsExternal
                     context.Response.StatusCode = 401;
                     context.Response.ReasonPhrase = "Token Expired";
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     context.Response.StatusCode = 500;
                     context.Response.ReasonPhrase = "Internal Server Error";

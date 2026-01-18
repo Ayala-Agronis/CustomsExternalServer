@@ -30,6 +30,7 @@ namespace CustomsExternal
 
             corsPolicy.Origins.Add("http://localhost:4200");
             corsPolicy.Origins.Add("https://localhost:44308");
+            corsPolicy.Origins.Add("http://localhost:5000");
             corsPolicy.Origins.Add("https://customsexternal20250624201845.azurewebsites.net");
 
             app.UseCors(new CorsOptions

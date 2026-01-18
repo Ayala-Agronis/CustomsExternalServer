@@ -44,16 +44,26 @@ namespace CustomsExternal.Controllers
 
             issuer = Environment.GetEnvironmentVariable("JwtIssuer")
                      ?? ConfigurationManager.AppSettings["JwtIssuer"]
-                     ?? "http://localhost/";
+                     ?? "http://localhost" +
+                     " " +
+                     "" +
+                     "" +
+                     "/";
         }
 
 
         [Authorize]
         public IHttpActionResult GetUsers()
+
+
+
         {
             var users = db.Registration.ToList();
             return Ok(users);
         }
+
+
+
 
         [HttpPost]
         public IHttpActionResult Post(Registration registration)
@@ -189,7 +199,7 @@ namespace CustomsExternal.Controllers
             var token = new JwtSecurityToken(issuer, //Issure    
                             issuer,  //Audience    
                             permClaims,
-                            expires: DateTime.Now.AddDays(1),
+                            expires: DateTime.Now.AddDays(7),
                             //expires: DateTime.Now.AddMinutes(1),
                             signingCredentials: credentials);
             var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);

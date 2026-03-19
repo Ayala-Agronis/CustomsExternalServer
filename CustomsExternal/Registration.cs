@@ -23,5 +23,8 @@ namespace CustomsExternal
         public Nullable<bool> AllowPromotion { get; set; }
         public string Password { get; set; }
         public string Id { get; set; }
+        public bool ComissionPerTranc { get; set; }
+        public string PasswordResetToken { get; set; }
+        public Nullable<System.DateTime> PasswordResetExpires { get; set; }
     }
 }

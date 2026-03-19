@@ -25,16 +25,7 @@ namespace CustomsExternal
             throw new UnintentionalCodeFirstException();
         }
     
-        public virtual DbSet<ConsignmentPackagesMeasures> ConsignmentPackagesMeasures { get; set; }
-        public virtual DbSet<ConsignmentRegisteredFacilities> ConsignmentRegisteredFacilities { get; set; }
-        public virtual DbSet<Consignments> Consignments { get; set; }
-        public virtual DbSet<Declarations> Declarations { get; set; }
-        public virtual DbSet<DeclarationTaxes> DeclarationTaxes { get; set; }
-        public virtual DbSet<DocumentAttribute> DocumentAttribute { get; set; }
-        public virtual DbSet<Documents> Documents { get; set; }
         public virtual DbSet<Registration> Registration { get; set; }
-        public virtual DbSet<SupplierInvoiceItems> SupplierInvoiceItems { get; set; }
-        public virtual DbSet<SupplierInvoices> SupplierInvoices { get; set; }
         public virtual DbSet<ChangeLog> ChangeLog { get; set; }
         public virtual DbSet<LoginHistory> LoginHistory { get; set; }
     }

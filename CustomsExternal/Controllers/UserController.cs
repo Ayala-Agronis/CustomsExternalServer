@@ -413,6 +413,7 @@ namespace CustomsExternal.Controllers
             }
         }
 
+
         private string DecodeEmail(string encodedEmail)
         {
             var bytes = Convert.FromBase64String(encodedEmail);
@@ -449,10 +450,180 @@ namespace CustomsExternal.Controllers
             return ipAddress;
         }
 
+        //[HttpPost]
+        //[Route("api/User/forgot-password")]
+        //public IHttpActionResult ForgotPassword(ForgotPasswordRequest req)
+        //{
+        //    if (req == null || string.IsNullOrWhiteSpace(req.Email))
+        //        return BadRequest("Email is required.");
+
+        //    var email = req.Email.Trim().ToLower();
+        //    var user = db.Registration.FirstOrDefault(u => u.Email.ToLower() == email);
+
+        //    // לא מגלים אם המשתמש קיים או לא
+        //    if (user == null)
+        //        return Ok(new { message = "If the email exists, a reset link was sent." });
+
+        //    var token = Convert.ToBase64String(Guid.NewGuid().ToByteArray())
+        //        .Replace("+", "").Replace("/", "").Replace("=", "");
+
+        //    user.PasswordResetToken = token;
+        //    user.PasswordResetExpires = DateTime.UtcNow.AddMinutes(30);
+        //    db.SaveChanges();
+
+        //    var clientBaseUrl = ConfigurationManager.AppSettings["ClientBaseUrl"];
+
+        //    var resetLink = $"{clientBaseUrl}/reset-password?token={HttpUtility.UrlEncode(token)}";
+
+        //    SendResetPasswordEmail(user.Email, user.FirstName, resetLink);
+
+        //    return Ok(new { message = "If the email exists, a reset link was sent." });
+        //}
+
+        [HttpPost]
+        [Route("api/User/forgot-password")]
+        public IHttpActionResult ForgotPassword(ForgotPasswordRequest req)
+        {
+            if (req == null || string.IsNullOrWhiteSpace(req.Email))
+            {
+                return Content(HttpStatusCode.BadRequest, new
+                {
+                    message = "יש להזין כתובת מייל תקינה."
+                });
+            }
+
+            var email = req.Email.Trim().ToLower();
+
+            var user = db.Registration.FirstOrDefault(u => u.Email.ToLower() == email);
+
+            if (user == null)
+            {
+                return Content(HttpStatusCode.NotFound, new
+                {
+                    message = "כתובת המייל אינה קיימת במערכת."
+                });
+            }
+
+            var token = Convert.ToBase64String(Guid.NewGuid().ToByteArray())
+                .Replace("+", "")
+                .Replace("/", "")
+                .Replace("=", "");
+
+            user.PasswordResetToken = token;
+            user.PasswordResetExpires = DateTime.UtcNow.AddMinutes(30);
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch
+            {
+                return Content(HttpStatusCode.InternalServerError, new
+                {
+                    message = "אירעה שגיאה בלתי צפויה. נסה שוב מאוחר יותר."
+                });
+            }
+
+            var clientBaseUrl = ConfigurationManager.AppSettings["ClientBaseUrl"];
+            var resetLink = $"{clientBaseUrl}/reset-password?token={HttpUtility.UrlEncode(token)}";
+
+            bool emailSent = SendResetPasswordEmail(user.Email, user.FirstName, resetLink);
+
+            if (!emailSent)
+            {
+                return Content(HttpStatusCode.InternalServerError, new
+                {
+                    message = "אירעה שגיאה בלתי צפויה. נסה שוב מאוחר יותר."
+                });
+            }
+
+            return Ok(new
+            {
+                message = "נשלחה הודעה לכתובת המייל שהוזנה."
+            });
+        }
+
+        [HttpPost]
+        [Route("api/User/reset-password")]
+        public IHttpActionResult ResetPassword(ResetPasswordRequest req)
+        {
+            if (req == null || string.IsNullOrWhiteSpace(req.Token) || string.IsNullOrWhiteSpace(req.NewPassword))
+                return BadRequest("Token and new password are required.");
+
+            if (req.NewPassword.Length < 6)
+                return BadRequest("Password must be at least 6 characters.");
+
+            var token = req.Token.Trim();
+            var user = db.Registration.FirstOrDefault(u => u.PasswordResetToken == token);
+
+            if (user == null || !user.PasswordResetExpires.HasValue || user.PasswordResetExpires.Value < DateTime.UtcNow)
+                return BadRequest("Invalid or expired token.");
+
+            // כרגע אצלך זה plaintext (כמו login), אז נשאיר עקבי:
+            user.Password = req.NewPassword;
+
+            user.PasswordResetToken = null;
+            user.PasswordResetExpires = null;
+
+            db.SaveChanges();
+            return Ok(new { message = "Password updated successfully." });
+        }
+
+        private bool SendResetPasswordEmail(string email, string firstName, string resetLink)
+        {
+            try
+            {
+                var client = new System.Net.Mail.SmtpClient("smtp.gmail.com", 587)
+                {
+                    Credentials = new NetworkCredential("reg@agronis.com", "sowrwjjumfponoqf"),
+                    EnableSsl = true
+                };
+
+                string projectRoot = AppDomain.CurrentDomain.BaseDirectory;
+                string emailPath = Path.Combine(projectRoot, "Templates", "HtmlResetPassword.html");
+
+                string emailBody = File.Exists(emailPath)
+                    ? File.ReadAllText(emailPath)
+                    : $"<p>שלום {firstName},</p><p><a href='{resetLink}'>לאיפוס סיסמה</a></p>";
+
+                emailBody = emailBody
+                    .Replace("{FirstName}", firstName ?? "")
+                    .Replace("{resetLink}", resetLink);
+
+                var message = new MailMessage
+                {
+                    From = new MailAddress("reg@agronis.com", "CustomsIL"),
+                    Subject = "איפוס סיסמה",
+                    Body = emailBody,
+                    IsBodyHtml = true
+                };
+
+                message.To.Add(email);
+                client.Send(message);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+
         public class LoginRequest
         {
             public string Email { get; set; }
             public string Password { get; set; }
+        }
+
+        public class ForgotPasswordRequest
+        {
+            public string Email { get; set; }
+        }
+
+        public class ResetPasswordRequest
+        {
+            public string Token { get; set; }
+            public string NewPassword { get; set; }
         }
     }
 }

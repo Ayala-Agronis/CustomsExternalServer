@@ -658,6 +658,10 @@
     </Content>
     <Content Include=".env" />
     <None Include="Properties\PublishProfiles\CustomsExternal20250624201845 - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\customsexternalserver - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\customsexternalserver - ReadOnly - FTP.pubxml" />
+    <None Include="Properties\PublishProfiles\customsexternalserver - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
     <Content Include="Scripts\jquery-3.7.0.min.js" />
@@ -815,17 +819,5 @@
   </Target>
   <Target Name="AfterBuild">
   </Target> -->
-  <ItemGroup>
-    <Content Include="**\*.html" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="**\*.css" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="**\*.js" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="**\*.json" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="**\*.png" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="**\*.jpg" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="**\*.jpeg" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="**\*.gif" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="**\*.svg" CopyToOutputDirectory="PreserveNewest" />
-    <Content Include="**\*.map" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
   <Import Project="..\packages\Microsoft.Playwright.1.53.0\build\Microsoft.Playwright.targets" Condition="Exists('..\packages\Microsoft.Playwright.1.53.0\build\Microsoft.Playwright.targets')" />
 </Project>

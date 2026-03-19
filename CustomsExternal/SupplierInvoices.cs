@@ -36,7 +36,6 @@ namespace CustomsExternal
         public string LocationID { get; set; }
         public string CurrencyCode { get; set; }
     
-        public virtual Declarations Declarations { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<SupplierInvoiceItems> SupplierInvoiceItems { get; set; }
     }

@@ -63,7 +63,13 @@ namespace CustomsExternal.Controllers
         }
 
 
-
+        //[AllowAnonymous]
+        //[HttpGet]
+        //[Route("api/User/ping")]
+        //public IHttpActionResult Ping()
+        //{
+        //    return Ok("pong");
+        //}
 
         [HttpPost]
         public IHttpActionResult Post(Registration registration)
@@ -97,13 +103,30 @@ namespace CustomsExternal.Controllers
             }
 
             // שליחת מייל
-            bool emailSent = SendEmailToUser(registration);
-            if (!emailSent)
+            //bool emailSent = SendEmailToUser(registration);
+            //if (!emailSent)
+            //{
+            //    return BadRequest("שליחת מייל אישור נכשלה.");
+            //}
+            try
             {
-                return BadRequest("שליחת מייל אישור נכשלה.");
+                bool emailSent = SendEmailToUser(registration);
+                if (!emailSent)
+                    return BadRequest("שליחת מייל אישור נכשלה.");
+                // 👉 הוספה חדשה
+                SendEmailToOffice(registration);
+            }
+            catch (Exception ex)
+            {
+                return Content(HttpStatusCode.InternalServerError, new
+                {
+                    //message = ex.ToString()
+                    message = "אירעה שגיאה בתהליך ההרשמה. נסה שוב מאוחר יותר."
+                });
             }
 
             registration.AllowPromotion = false;
+            registration.ComissionPerTranc = true;
             db.Registration.Add(registration);
             db.SaveChanges();
 
@@ -199,8 +222,9 @@ namespace CustomsExternal.Controllers
             var token = new JwtSecurityToken(issuer, //Issure    
                             issuer,  //Audience    
                             permClaims,
-                            expires: DateTime.Now.AddDays(7),
+                            //expires: DateTime.Now.AddDays(7),
                             //expires: DateTime.Now.AddMinutes(1),
+                            expires: DateTime.UtcNow.AddDays(1),
                             signingCredentials: credentials);
             var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
             //return new { data = jwt_token };
@@ -278,6 +302,18 @@ namespace CustomsExternal.Controllers
         public void Delete(int id)
         {
         }
+
+        private (string smtpHost, int smtpPort, string smtpEmail, string smtpPassword, string displayName) GetSmtpSettings()
+        {
+            string smtpHost = ConfigurationManager.AppSettings["SmtpHost"];
+            int smtpPort = int.Parse(ConfigurationManager.AppSettings["SmtpPort"]);
+            string smtpEmail = ConfigurationManager.AppSettings["SmtpEmail"];
+            string smtpPassword = ConfigurationManager.AppSettings["SmtpPassword"];
+            string displayName = ConfigurationManager.AppSettings["SmtpDisplayName"];
+
+            return (smtpHost, smtpPort, smtpEmail, smtpPassword, displayName);
+        }
+
         private bool SendEmailToUser(Registration registration)
         {
             try
@@ -286,16 +322,19 @@ namespace CustomsExternal.Controllers
                 string encodeEmail = Convert.ToBase64String(Encoding.UTF8.GetBytes(registration.Email));
                 string confirmationLink = $"{baseUrl}/api/User/ConfirmEmail?email={encodeEmail}";
 
-                var client = new System.Net.Mail.SmtpClient("smtp.gmail.com", 587)
+                var (smtpHost, smtpPort, smtpEmail, smtpPassword, displayName) = GetSmtpSettings();
+
+                var client = new System.Net.Mail.SmtpClient(smtpHost, smtpPort)
                 {
-                    Credentials = new NetworkCredential("reg@agronis.com", "sowrwjjumfponoqf"),
+                    Credentials = new NetworkCredential(smtpEmail, smtpPassword),
                     EnableSsl = true
                 };
 
                 string projectRoot = AppDomain.CurrentDomain.BaseDirectory;
                 string emailBody = "";
                 string emailPath = Path.Combine(projectRoot, "Templates", "HtmlEmailPage.html");
-
+                if (!File.Exists(emailPath))
+                    throw new Exception("HtmlEmailPage.html not found: " + emailPath);
                 if (File.Exists(emailPath))
                 {
                     emailBody = File.ReadAllText(emailPath);
@@ -311,13 +350,15 @@ namespace CustomsExternal.Controllers
 
                 var message = new MailMessage
                 {
-                    From = new MailAddress("reg@agronis.com", "CustomsIL"),
+                    From = new MailAddress(smtpEmail, displayName),
                     Subject = "אישור הרשמה",
                     Body = emailBody,
                     IsBodyHtml = true
                 };
 
                 string imagePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "logo.png");
+                if (!File.Exists(imagePath))
+                    throw new Exception("logo.png not found: " + imagePath);
                 LinkedResource logoImage = new LinkedResource(imagePath)
                 {
                     ContentId = "logo",
@@ -326,6 +367,8 @@ namespace CustomsExternal.Controllers
                 };
 
                 string imagePath2 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "background.png");
+                if (!File.Exists(imagePath2))
+                    throw new Exception("background.png not found: " + imagePath2);
                 LinkedResource logoImage2 = new LinkedResource(imagePath2)
                 {
                     ContentId = "background",
@@ -334,6 +377,8 @@ namespace CustomsExternal.Controllers
                 };
 
                 string imagePath3 = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Images", "box.png");
+                if (!File.Exists(imagePath3))
+                    throw new Exception("box.png not found: " + imagePath3);
                 LinkedResource logoImage3 = new LinkedResource(imagePath3)
                 {
                     ContentId = "box",
@@ -352,7 +397,7 @@ namespace CustomsExternal.Controllers
             }
             catch (Exception ex)
             {
-                return false;
+                throw new Exception("SendEmailToUser failed: " + ex.ToString());
             }
         }
 
@@ -571,11 +616,14 @@ namespace CustomsExternal.Controllers
 
         private bool SendResetPasswordEmail(string email, string firstName, string resetLink)
         {
+
             try
             {
-                var client = new System.Net.Mail.SmtpClient("smtp.gmail.com", 587)
+                var (smtpHost, smtpPort, smtpEmail, smtpPassword, displayName) = GetSmtpSettings();
+
+                var client = new System.Net.Mail.SmtpClient(smtpHost, smtpPort)
                 {
-                    Credentials = new NetworkCredential("reg@agronis.com", "sowrwjjumfponoqf"),
+                    Credentials = new NetworkCredential(smtpEmail, smtpPassword),
                     EnableSsl = true
                 };
 
@@ -592,7 +640,7 @@ namespace CustomsExternal.Controllers
 
                 var message = new MailMessage
                 {
-                    From = new MailAddress("reg@agronis.com", "CustomsIL"),
+                    From = new MailAddress(smtpEmail, displayName),
                     Subject = "איפוס סיסמה",
                     Body = emailBody,
                     IsBodyHtml = true
@@ -624,6 +672,48 @@ namespace CustomsExternal.Controllers
         {
             public string Token { get; set; }
             public string NewPassword { get; set; }
+        }
+
+        private bool SendEmailToOffice(Registration registration)
+        {
+
+            try
+            {
+
+                var (smtpHost, smtpPort, smtpEmail, smtpPassword, displayName) = GetSmtpSettings();
+
+                var client = new System.Net.Mail.SmtpClient(smtpHost, smtpPort)
+                {
+                    Credentials = new NetworkCredential(smtpEmail, smtpPassword),
+                    EnableSsl = true
+                };
+
+                var message = new MailMessage
+                {
+                    From = new MailAddress(smtpEmail, displayName),
+                    Subject = "משתמש חדש נרשם",
+                    Body = $@"
+                משתמש חדש נרשם למערכת:
+
+                שם: {registration.FirstName} {registration.LastName}
+                אימייל: {registration.Email}
+                טלפון: {registration.Mobile}
+                תעודת זהות: {registration.Id}
+            ",
+                    IsBodyHtml = false
+                };
+
+                // 👉 כאן כתובת המשרד
+                string officeEmail = ConfigurationManager.AppSettings["OfficeEmail"];
+                message.To.Add(officeEmail);
+
+                client.Send(message);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 using System;
 using System.Text;
-using DotNetEnv;
+//using DotNetEnv;
 using dotenv.net;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Owin.Cors;
@@ -20,7 +20,7 @@ namespace CustomsExternal
         {
             // 1. טען משתני סביבה
             DotEnv.Load();
-            Env.Load();
+            //Env.Load();
 
             app.Use(async (context, next) =>
             {
@@ -81,6 +81,8 @@ namespace CustomsExternal
 
             //app.Use(async (context, next) =>
             //{
+            //    context.Response.Headers.Set("X-Debug-Owin", "hit");
+
             //    if (context.Request.Method == "OPTIONS")
             //    {
             //        var origin = context.Request.Headers.Get("Origin");

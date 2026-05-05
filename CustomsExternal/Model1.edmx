@@ -42,6 +42,9 @@
           <Property Name="ComissionPerTranc" Type="bit" Nullable="false" />
           <Property Name="PasswordResetToken" Type="nvarchar" MaxLength="200" />
           <Property Name="PasswordResetExpires" Type="datetime" />
+          <Property Name="PersonalFee" Type="decimal" Precision="6" Scale="2" />
+          <Property Name="BusinessFee" Type="decimal" Precision="6" Scale="2" />
+          <Property Name="EnterService" Type="decimal" Precision="6" Scale="2" />
         </EntityType>
         <EntityContainer Name="CustomsExternalModelStoreContainer">
           <EntitySet Name="ChangeLog" EntityType="Self.ChangeLog" Schema="dbo" store:Type="Tables" />
@@ -68,6 +71,9 @@
           <Property Name="ComissionPerTranc" Type="Boolean" Nullable="false" />
           <Property Name="PasswordResetToken" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
           <Property Name="PasswordResetExpires" Type="DateTime" Precision="3" />
+          <Property Name="PersonalFee" Type="Decimal" Precision="6" Scale="2" />
+          <Property Name="BusinessFee" Type="Decimal" Precision="6" Scale="2" />
+          <Property Name="EnterService" Type="Decimal" Precision="6" Scale="2" />
         </EntityType>
         <EntityContainer Name="CustomsExternalEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="Registration" EntityType="Self.Registration" />
@@ -104,6 +110,9 @@
           <EntitySetMapping Name="Registration">
             <EntityTypeMapping TypeName="CustomsExternalModel.Registration">
               <MappingFragment StoreEntitySet="Registration">
+                <ScalarProperty Name="EnterService" ColumnName="EnterService" />
+                <ScalarProperty Name="BusinessFee" ColumnName="BusinessFee" />
+                <ScalarProperty Name="PersonalFee" ColumnName="PersonalFee" />
                 <ScalarProperty Name="PasswordResetExpires" ColumnName="PasswordResetExpires" />
                 <ScalarProperty Name="PasswordResetToken" ColumnName="PasswordResetToken" />
                 <ScalarProperty Name="ComissionPerTranc" ColumnName="ComissionPerTranc" />

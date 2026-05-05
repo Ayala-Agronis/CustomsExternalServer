@@ -529,15 +529,6 @@
     <Compile Include="ChangeLog.cs">
       <DependentUpon>Model1.tt</DependentUpon>
     </Compile>
-    <Compile Include="ConsignmentPackagesMeasures.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="ConsignmentRegisteredFacilities.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Consignments.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
     <Compile Include="Controllers\CommissionPaymentController.cs" />
     <Compile Include="Controllers\DeclarationController.cs" />
     <Compile Include="Controllers\DocumentController.cs" />
@@ -546,18 +537,6 @@
     <Compile Include="Controllers\GoogleLoginController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
-    <Compile Include="Declarations.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DeclarationTaxes.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="DocumentAttribute.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="Documents.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -587,12 +566,6 @@
     <Compile Include="Services\IdValidator.cs" />
     <Compile Include="Services\RexTester.cs" />
     <Compile Include="Startup.cs" />
-    <Compile Include="SupplierInvoiceItems.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
-    <Compile Include="SupplierInvoices.cs">
-      <DependentUpon>Model1.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
@@ -661,6 +634,7 @@
     <None Include="Properties\PublishProfiles\customsexternalserver - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\customsexternalserver - ReadOnly - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\customsexternalserver - Web Deploy.pubxml" />
+    <None Include="Properties\PublishProfiles\customsexternalserver - Web Deploy1.pubxml" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />

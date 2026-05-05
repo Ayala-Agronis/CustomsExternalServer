@@ -26,5 +26,8 @@ namespace CustomsExternal
         public bool ComissionPerTranc { get; set; }
         public string PasswordResetToken { get; set; }
         public Nullable<System.DateTime> PasswordResetExpires { get; set; }
+        public Nullable<decimal> PersonalFee { get; set; }
+        public Nullable<decimal> BusinessFee { get; set; }
+        public Nullable<decimal> EnterService { get; set; }
     }
 }

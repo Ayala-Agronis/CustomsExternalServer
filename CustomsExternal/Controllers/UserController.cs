@@ -1,30 +1,31 @@
 ﻿
-using System.Net.Mail;
-using System.Text;
-using MimeKit;
-using MailKit.Security;
-using MailKit.Net.Smtp;
-using System.Net;
-//using SmtpClient = MailKit.Net.Smtp.SmtpClient;
-using System.Web.Http;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using System;
-using System.Linq;
-using HttpGetAttribute = System.Web.Http.HttpGetAttribute;
-using System.Configuration;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+using CustomsExternal.Services;
 using dotenv.net;
 using Google.Apis.Auth.OAuth2;
-using System.IO;
-using System.Data.Entity;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using Microsoft.IdentityModel.Tokens;
+using MimeKit;
 using OpenQA.Selenium.DevTools.V129.Database;
-using CustomsExternal.Services;
-using System.Web;
-using System.Net.Mime;
+using System;
+using System.Collections.Generic;
+using System.Configuration;
+using System.Data.Entity;
+using System.IdentityModel.Tokens.Jwt;
+using System.IO;
+using System.Linq;
+using System.Net;
 using System.Net.Http;
+using System.Net.Mail;
+using System.Net.Mime;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web;
+//using SmtpClient = MailKit.Net.Smtp.SmtpClient;
+using System.Web.Http;
+using static CustomsExternal.Controllers.UserController;
+using HttpGetAttribute = System.Web.Http.HttpGetAttribute;
 
 namespace CustomsExternal.Controllers
 {
@@ -203,7 +204,7 @@ namespace CustomsExternal.Controllers
 
 
 
-        public Object GetToken(string userId, string email)
+        public Object GetToken(string userId, string email, bool rememberMe)
         {
             //    key = Environment.GetEnvironmentVariable("JwtKey");
             //    issuer = Environment.GetEnvironmentVariable("JwtIssuer");
@@ -224,8 +225,11 @@ namespace CustomsExternal.Controllers
                             permClaims,
                             //expires: DateTime.Now.AddDays(7),
                             //expires: DateTime.Now.AddMinutes(1),
-                            expires: DateTime.UtcNow.AddDays(1),
-                            signingCredentials: credentials);
+                            //expires: DateTime.UtcNow.AddDays(1),
+                            expires: rememberMe
+                                ? DateTime.UtcNow.AddDays(30)
+                                : DateTime.UtcNow.AddDays(1),
+        signingCredentials: credentials);
             var jwt_token = new JwtSecurityTokenHandler().WriteToken(token);
             //return new { data = jwt_token };
             return jwt_token;
@@ -274,7 +278,11 @@ namespace CustomsExternal.Controllers
                 return InternalServerError(ex);
             }
 
-            var token = GetToken(user.RowId.ToString(), user.Email);
+            var token = GetToken(
+                user.RowId.ToString(),
+                user.Email,
+                loginRequest.RememberMe
+            );
             return Ok(new
             {
                 token = token,
@@ -661,6 +669,7 @@ namespace CustomsExternal.Controllers
         {
             public string Email { get; set; }
             public string Password { get; set; }
+            public bool RememberMe { get; set; }
         }
 
         public class ForgotPasswordRequest
